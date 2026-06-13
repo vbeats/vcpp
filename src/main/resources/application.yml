@@ -1,0 +1,38 @@
+server:
+  port: 10086
+  shutdown: graceful
+
+spring:
+  profiles:
+    active: dev
+
+logging:
+  config: classpath:logback-spring.xml
+
+forest:
+  async-mode: platform
+  max-connections: 1000
+  max-route-connections: 500
+  max-request-queue-size: 200
+  max-async-thread-size: 300
+  max-async-queue-size: 200
+  connect-timeout: 3000
+  read-timeout: 5000
+  max-retry-count: 0
+  ssl-protocol: TLS
+  log-enabled: true
+  log-request: true
+  log-request-headers: true
+  log-request-body: true
+  log-response-content: true
+  log-response-status: true
+  log-response-headers: false
+  backend: okhttp3
+
+vcpp:
+  api: http://localhost
+  ykc15-port: 9847
+  ykc16-port: 9848
+  ykc17-port: 9849
+  ykc18-port: 9850
+  ykc20-port: 9851
