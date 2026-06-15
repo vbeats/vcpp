@@ -69,7 +69,6 @@ public abstract class AbstractYkcServerBootstrap implements InitializingBean, Di
 				for (String protocol : protocols) {
 					String key = protocol + "_" + frameType.getType();
 					YkcServerContext.EXECUTER_MAP.put(key, executor);
-					log.info("【云快充】 cmd executor 初始化成功: {} -> {}", key, executor.getClass().getName());
 				}
 
 			} catch (Exception e) {

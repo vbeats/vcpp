@@ -30,7 +30,6 @@ forest:
   backend: okhttp3
 
 vcpp:
-  api: http://localhost
   ykc15-port: 9847
   ykc16-port: 9848
   ykc17-port: 9849

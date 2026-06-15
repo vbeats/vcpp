@@ -12,4 +12,7 @@ public interface ApiClient {
 
 	@Post(url = "/login")
 	R login(@JSONBody Map<String, Object> params);
+
+	@Post("/getBillingModel")
+	R getBillingModel(@JSONBody Map<String, Object> params);
 }

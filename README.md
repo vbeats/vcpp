@@ -28,8 +28,10 @@ tcp 服务端口:
 
 > 桩 == 平台 MQTT 消息通信
 
-- [ ] 平台指令
-- [ ] 设备状态 / 数据
+- 平台指令 topic: vcpp/cmd/{充电桩号}
+- 设备状态 / 数据 topic: vcpp/data/{充电桩号}
+
+多实例部署时, 每个实例指定不同的`vcpp.mqtt.client-id`
 
 ## 报文demo
 

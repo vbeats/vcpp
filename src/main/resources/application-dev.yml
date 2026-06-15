@@ -1,0 +1,5 @@
+vcpp:
+  api: http://localhost
+  mqtt:
+    host: tcp://10.88.0.81:1883
+    client-id: vcpp-1

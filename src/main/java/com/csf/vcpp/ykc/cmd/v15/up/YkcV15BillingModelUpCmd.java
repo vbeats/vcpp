@@ -1,8 +1,9 @@
 package com.csf.vcpp.ykc.cmd.v15.up;
 
 import com.csf.vcpp.annotation.ProtocolCmd;
+import com.csf.vcpp.api.ApiClient;
 import com.csf.vcpp.utils.BcdUtil;
-import com.csf.vcpp.ykc.cmd.v15.down.YkcV15HeartBeatDownCmd;
+import com.csf.vcpp.ykc.cmd.v15.down.YkcV15BillingModelDownCmd;
 import com.csf.vcpp.ykc.enums.FrameType;
 import com.csf.vcpp.ykc.executor.YkcCmdExecutor;
 import com.csf.vcpp.ykc.model.YkcMsgData;
@@ -17,10 +18,11 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.HEARTBEAT, protocols = {V15, V16, V17, V18, V20})
-public class YkcV15HeartBeatUpCmd extends YkcCmdExecutor { // 心跳
+@ProtocolCmd(value = FrameType.BILLING_VERIFY_MODEL, protocols = {V15, V16, V17, V18})
+public class YkcV15BillingModelUpCmd extends YkcCmdExecutor { // 计费模型请求  尖峰平谷模式
 
-	private final YkcV15HeartBeatDownCmd ykcV15HeartBeatDownCmd;
+	private final ApiClient apiClient;
+	private final YkcV15BillingModelDownCmd ykcV15BillingModelDownCmd;
 
 	@Override
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
@@ -30,22 +32,17 @@ public class YkcV15HeartBeatUpCmd extends YkcCmdExecutor { // 心跳
 		body.readBytes(deviceIdBytes);
 		Long deviceId = BcdUtil.bcdBytesToLong(deviceIdBytes);  // 桩号
 
-		byte gunNo = body.readByte(); // 枪号
+		log.info("【云快充】{} ⬆️ 计费模型请求 - 桩号: {}", versionLabel, deviceId);
 
-		byte gunStatus = body.readByte(); // 枪状态 0x00：正常 0x01：故障
+		// todo 获取 平台计费模型
 
-		log.info("【云快充】{} ⬆️ 心跳💓 - 桩号 : {} 枪号 : {} 枪状态: {}[{}]", versionLabel, deviceId, gunNo, gunStatus, getGunStatusDesc(gunStatus));
+		//R<> priceRes = apiClient.getBillingModel(params);
 
 		data.setDeviceIdBytes(deviceIdBytes);
-		data.setGunNo(gunNo);
-		ykcV15HeartBeatDownCmd.execute(channel, versionLabel, data);
-	}
+		data.setBillingSections(null);
+		data.setBillingModels(null);
 
-	private String getGunStatusDesc(byte gunStatus) {
-		return switch (gunStatus) {
-			case 0x00 -> "正常";
-			case 0x01 -> "故障";
-			default -> "-";
-		};
+		// 应答
+		ykcV15BillingModelDownCmd.execute(channel, versionLabel, data);
 	}
 }

@@ -57,14 +57,14 @@ public class YkcDataRouter {
 	private void routeMsg(Channel channel, String versionLabel, YkcMsgData msgData) {
 		YkcCmdExecutor cmdExecutor = YkcServerContext.EXECUTER_MAP.get(versionLabel + "_" + msgData.getFrameType());
 		if (ObjectUtils.isEmpty(cmdExecutor)) {
-			log.warn("【云快充】{} data ⬆️ 未实现的帧类型 {}", versionLabel, msgData.getFrameType());
+			log.warn("【云快充】{} data ⬆️ 帧类型未实现cmd executor {}", versionLabel, msgData.getFrameType());
 			return;
 		}
 
 		try {
 			cmdExecutor.execute(channel, versionLabel, msgData);
 		} catch (Exception e) {
-			log.error("【云快充】{} data ⬆️ 执行业务逻辑异常...", versionLabel, e);
+			log.error("【云快充】{} data ⬆️ 解析异常...", versionLabel, e);
 		} finally {
 			ByteBuf body = msgData.getMsgBody();
 			if (body.refCnt() > 0) {
