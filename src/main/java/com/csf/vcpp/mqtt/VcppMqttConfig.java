@@ -22,6 +22,12 @@ public class VcppMqttConfig {
 	@Value("${vcpp.mqtt.client-id}")
 	private String clientId;
 
+	@Value("${vcpp.mqtt.username}")
+	private String username;
+
+	@Value("${vcpp.mqtt.password}")
+	private String password;
+
 	private final MqttCmdListener mqttCmdListener;
 
 	@Bean
@@ -34,8 +40,8 @@ public class VcppMqttConfig {
 			options.setAutomaticReconnect(true);
 
 			options.setSessionExpiryInterval(30 * 60L); // server 会话消息存储过期时间 30分钟
-			options.setUserName("admin");
-			options.setPassword("admin123456".getBytes(StandardCharsets.UTF_8));
+			options.setUserName(username);
+			options.setPassword(password.getBytes(StandardCharsets.UTF_8));
 
 			client.connect(options);
 
