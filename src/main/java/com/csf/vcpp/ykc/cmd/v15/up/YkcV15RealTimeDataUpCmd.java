@@ -89,8 +89,30 @@ public class YkcV15RealTimeDataUpCmd extends YkcCmdExecutor { // 实时监测数
 
 		List<String> exceptionInfo = YkcExceptionUtil.getRealTimeDataError(errorBytes);
 
-		log.info("【云快充】{} ⬆️ 实时监测数据 - 交易流水号: {} 桩号: {} 枪号: {} 枪状态: {}[{}] 枪是否归位: {}[{}] 是否插枪: {}[{}] 输出电压: {}V 输出电流: {}A 枪线温度: {}℃ 枪线编码: {} SOC: {}% 电池组最高温度: {}℃ 累计充电时间: {}min 剩余时间: {}min 充电度数: {}° 计损充电度数: {}° 已充金额: {}元 硬件故障: {}",
-			versionLabel, tradeNo, deviceId, gunNo, gunStatus, getGunStatusDesc(gunStatus), gw, getGwDesc(gw), cq, getCqDesc(cq), outVol, outCurrent, gunTemp, gunNum, soc, batteryMaxTemp, totalChargeTime, remainChargeTime, chargeKwh, sunChargeKwh, chargeAmount, exceptionInfo);
+		log.info("""
+				【云快充】{} ⬆️ 实时监测数据 - 交易流水号: {}
+				桩号: {}
+				枪号: {}
+				枪状态: {}[{}]
+				枪是否归位: {}[{}]
+				是否插枪: {}[{}]
+				输出电压: {}V
+				输出电流: {}A
+				枪线温度: {}℃
+				枪线编码: {}
+				SOC: {}%
+				电池组最高温度: {}℃
+				累计充电时间: {}min
+				剩余时间: {}min
+				充电度数: {}°
+				计损充电度数: {}°
+				已充金额: {}元
+				硬件故障: {}
+				---------------------------------
+				""",
+			versionLabel, tradeNo, deviceId, gunNo, gunStatus, getGunStatusDesc(gunStatus), gw, getGwDesc(gw),
+			cq, getCqDesc(cq), outVol, outCurrent, gunTemp, gunNum, soc, batteryMaxTemp,
+			totalChargeTime, remainChargeTime, chargeKwh, sunChargeKwh, chargeAmount, exceptionInfo);
 	}
 
 	private String getGunStatusDesc(byte gunStatus) {

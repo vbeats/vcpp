@@ -68,7 +68,23 @@ public class YkcV15ParamConfigUpCmd extends YkcCmdExecutor { // 参数配置
 		// 电桩最小输出电流
 		BigDecimal minOutCurrent = new BigDecimal(body.readUnsignedShortLE()).multiply(new BigDecimal("0.1")).subtract(new BigDecimal(400)).setScale(1, RoundingMode.DOWN);
 
-		log.info("【云快充】{} ⬆️ 参数配置 - 交易流水号: {} 桩号: {} 枪号: {} BMS 单体动力蓄电池最高允许充电电压: {}V BMS 最高允许充电电流: {}A BMS 动力蓄电池标称总能量: {}kwh BMS 最高允许充电总电压: {}V BMS 最高允许温度: {}℃ soc: {}% BMS 整车动力蓄电池当前电池电压: {}V 电桩最高输出电压: {}V 电桩最低输出电压: {}V 电桩最大输出电流: {}A 电桩最小输出电流: {}A",
+		log.info("""
+				【云快充】{} ⬆️ 参数配置 - 交易流水号: {}
+				桩号: {}
+				枪号: {}
+				BMS 单体动力蓄电池最高允许充电电压: {}V
+				BMS 最高允许充电电流: {}A
+				BMS 动力蓄电池标称总能量: {}kwh
+				BMS 最高允许充电总电压: {}V
+				BMS 最高允许温度: {}℃
+				SOC: {}%
+				BMS 整车动力蓄电池当前电池电压: {}V
+				电桩最高输出电压: {}V
+				电桩最低输出电压: {}V
+				电桩最大输出电流: {}A
+				电桩最小输出电流: {}A
+				---------------------------------
+				""",
 			versionLabel, tradeNo, deviceId, gunNo, batteryMaxVol, batteryMaxCurrent, batteryTotalKwh, maxVol, maxTemp, soc, vol, maxOutVol, minOutVol, maxOutCurrent, minOutCurrent);
 	}
 }

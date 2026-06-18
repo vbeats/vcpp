@@ -70,7 +70,19 @@ public class YkcV15BillingModelSettingDownCmd extends YkcCmdExecutor { // 计费
 		// 48时段电价
 		rates.forEach(rate -> msgBody.writeByte(rate.byteValue()));
 
-		log.info("【云快充】{} ⬇️ 计费模型设置 - 桩号: {} 尖电费率: {} 尖服务费率: {} 峰电费率: {} 峰服务费率: {} 平电费率: {} 平服务费率: {} 谷电费率: {} 谷服务费率: {} 48时段电价: {}", versionLabel, BcdUtil.bcdBytesToLong(data.getDeviceIdBytes()), j.getEp(), j.getSp(), f.getEp(), f.getSp(), p.getEp(), p.getSp(), g.getEp(), g.getSp(), rates);
+		log.info("""
+			【云快充】{} ⬇️ 计费模型设置 - 桩号: {}
+			尖电费率: {}
+			尖服务费率: {}
+			峰电费率: {}
+			峰服务费率: {}
+			平电费率: {}
+			平服务费率: {}
+			谷电费率: {}
+			谷服务费率: {}
+			48时段电价: {}
+			---------------------------------
+			""", versionLabel, BcdUtil.bcdBytesToLong(data.getDeviceIdBytes()), j.getEp(), j.getSp(), f.getEp(), f.getSp(), p.getEp(), p.getSp(), g.getEp(), g.getSp(), rates);
 
 		ByteBuf res = YkcAckUtil.createAck(data.getSequence(), data.getEncryptFlag(), FrameType.BILLING_MODEL_SETTING, msgBody);
 

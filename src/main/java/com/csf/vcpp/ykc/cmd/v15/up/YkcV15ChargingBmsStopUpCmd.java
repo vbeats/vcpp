@@ -44,7 +44,15 @@ public class YkcV15ChargingBmsStopUpCmd extends YkcCmdExecutor { // 充电阶段
 		// BMS 中止充电错误原因
 		String errorReasons = YkcExceptionUtil.parseBmsErrorReasons(body.readByte());
 
-		log.info("【云快充】{} ⬆️ 充电阶段BMS中止 - 交易流水号: {} 桩号: {} 枪号: {} 中止原因: {} 故障原因: {} 错误原因: {}",
+		log.info("""
+				【云快充】{} ⬆️ 充电阶段BMS中止 - 交易流水号: {}
+				桩号: {}
+				枪号: {}
+				中止原因: {}
+				故障原因: {}
+				错误原因: {}
+				---------------------------------
+				""",
 			versionLabel, tradeNo, deviceId, gunNo, stopReasons, faultReasons, errorReasons);
 
 

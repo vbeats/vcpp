@@ -18,7 +18,7 @@ import org.springframework.util.ObjectUtils;
 @RequiredArgsConstructor
 public class YkcDataRouter {
 	public void route(Channel channel, String versionLabel, String msg) {
-		log.info("【云快充】{} data ⬆️: {}", versionLabel, msg);
+		log.info("【云快充】{} data Hex ⬆️: {}", versionLabel, msg);
 
 		ByteBuf byteBuf = Unpooled.copiedBuffer(HexUtil.decodeHex(msg));
 		byteBuf.skipBytes(1);

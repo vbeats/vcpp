@@ -134,7 +134,40 @@ public class YkcV15TradeUpCmd extends YkcCmdExecutor { // 交易记录
 		// 物理卡号
 		long cardNo = body.readLongLE();
 
-		log.info("【云快充】{} ⬆️ 交易记录 - 交易流水号: {} 桩号: {} 枪号: {} 开始时间: {} 结束时间: {} 尖单价: {} 尖电量: {}° 计损尖电量: {}° 尖金额: {} 峰单价: {} 峰电量: {}° 计损峰电量: {}° 峰金额: {} 平单价: {} 平电量: {}° 计损平电量: {}° 平金额: {} 谷单价: {} 谷电量: {}° 计损谷电量: {}° 谷金额: {} 电表总起值: {}° 电表总止值: {}° 总电量: {}° 计损总电量: {}° 消费金额: {}元 vin: {} 交易标识: {}[{}] 交易时间: {} 停止原因: {} 物理卡号: {}",
+		log.info("""
+				【云快充】{} ⬆️ 交易记录 - 交易流水号: {}
+				桩号: {}
+				枪号: {}
+				开始时间: {}
+				结束时间: {}
+				尖单价: {}
+				尖电量: {}°
+				计损尖电量: {}°
+				尖金额: {}
+				峰单价: {}
+				峰电量: {}°
+				计损峰电量: {}°
+				峰金额: {}
+				平单价: {}
+				平电量: {}°
+				计损平电量: {}°
+				平金额: {}
+				谷单价: {}
+				谷电量: {}°
+				计损谷电量: {}°
+				谷金额: {}
+				电表总起值: {}°
+				电表总止值: {}°
+				总电量: {}°
+				计损总电量: {}°
+				消费金额: {}元
+				vin: {}
+				交易标识: {}[{}]
+				交易时间: {}
+				停止原因: {}
+				物理卡号: {}
+				---------------------------------
+				""",
 			versionLabel, tradeNo, deviceId, gunNo, startTime, endTime, jian, jianKwh, jianSunKwh, jianAmount, feng, fengKwh, fengSunKwh, fengAmount, ping, pingKwh, pingSunKwh, pingAmount, gu, guKwh, guSunKwh, guAmount, meterStart, meterEnd, totalKwh, totalSunKwh, totalAmount, vin, tradeType, getTradeTypeDesc(tradeType), tradeTime, stopReasonStr, cardNo);
 
 		// todo upload

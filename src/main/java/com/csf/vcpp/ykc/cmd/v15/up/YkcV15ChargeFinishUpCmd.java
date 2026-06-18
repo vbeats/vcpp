@@ -62,7 +62,20 @@ public class YkcV15ChargeFinishUpCmd extends YkcCmdExecutor { // 充电结束
 		body.readBytes(motorNoBytes);
 		String motorNo = HexUtil.encodeHexStr(motorNoBytes);
 
-		log.info("【云快充】{} ⬆️ 充电结束 - 交易流水号: {} 桩号: {} 枪号: {} SOC: {}% BMS 动力蓄电池单体最低电压: {}V BMS 动力蓄电池单体最高电压: {}V BMS 动力蓄电池最低温度: {}℃ BMS 动力蓄电池最高温度: {}℃ 累计充电时间: {}min 输出能量: {}kwh 充电机编号: {}",
+		log.info("""
+				【云快充】{} ⬆️ 充电结束 - 交易流水号: {}
+				桩号: {}
+				枪号: {}
+				SOC: {}%
+				BMS 动力蓄电池单体最低电压: {}V
+				BMS 动力蓄电池单体最高电压: {}V
+				BMS 动力蓄电池最低温度: {}℃
+				BMS 动力蓄电池最高温度: {}℃
+				累计充电时间: {}min
+				输出能量: {}kwh
+				充电机编号: {}
+				---------------------------------
+				""",
 			versionLabel, tradeNo, deviceId, gunNo, soc, minVol, maxVol, minTemp, maxTemp, totalChargeTime, kwh, motorNo);
 	}
 }

@@ -72,7 +72,24 @@ public class YkcV15ChargingBmsQaUpCmd extends YkcCmdExecutor { // 充电过程BM
 		// 累计充电时间	0~600 min
 		int totalChargeTime = body.readUnsignedShortLE();
 
-		log.info("【云快充】{} ⬆️ 充电过程BMS需求与充电机输出 - 交易流水号: {} 桩号: {} 枪号: {} BMS 电压需求: {}V BMS 电流需求: {}A BMS 充电模式: {}[{}] BMS 充电电压测量值: {}V BMS 充电电流测量值: {}A BMS 最高单体动力蓄电池电压: {}V BMS 最高单体动力蓄电池电压所在组号: {} BMS 当前荷电状态SOC: {}% BMS 估算剩余充电时间: {}min 电桩电压输出值: {}V 电桩电流输出值: {}A 累计充电时间: {}min",
+		log.info("""
+				【云快充】{} ⬆️ 充电过程BMS需求与充电机输出 - 交易流水号: {}
+				桩号: {}
+				枪号: {}
+				BMS 电压需求: {}V
+				BMS 电流需求: {}A
+				BMS 充电模式: {}[{}]
+				BMS 充电电压测量值: {}V
+				BMS 充电电流测量值: {}A
+				BMS 最高单体动力蓄电池电压: {}V
+				BMS 最高单体动力蓄电池电压所在组号: {}
+				BMS 当前荷电状态SOC: {}%
+				BMS 估算剩余充电时间: {}min
+				电桩电压输出值: {}V
+				电桩电流输出值: {}A
+				累计充电时间: {}min
+				---------------------------------
+				""",
 			versionLabel, tradeNo, deviceId, gunNo, voltageDemand, currentDemand, chargeMode, getDesc(chargeMode), voltageMeasurement, currentMeasurement, batteryMaxVol, batteryMaxVolGroup, soc, remainingChargeTime, voltageOutput, currentOutput, totalChargeTime);
 	}
 

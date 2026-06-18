@@ -104,7 +104,26 @@ public class YkcV15ErrorUpCmd extends YkcCmdExecutor { // 错误报文
 
 		// 充电机其他
 
-		log.info("【云快充】{} 充电桩 ⬆️ BMS充电错误报文 - 交易流水号: {} 桩号: {} 枪号: {} 接收SPN2560=0x00 的充电机辨识报文超时: {}[{}] 接收SPN2560=0xAA 的充电机辨识报文超时: {}[{}] 接收充电机的时间同步和充电机最大输出能力报文超时: {}[{}] 接收充电机完成充电准备报文超时: {}[{}] 接收充电机充电状态报文超时: {}[{}] 接收充电机中止充电报文超时: {}[{}] 接收充电机充电统计报文超时: {}[{}] 接收BMS 和车辆的辨识报文超时: {}[{}] 接收电池充电参数报文超时: {}[{}] 接收BMS 完成充电准备报文超时: {}[{}] 接收电池充电总状态报文超时: {}[{}] 接收电池充电要求报文超时: {}[{}] 接收BMS 中止充电报文超时: {}[{}] 接收BMS 充电统计报文超时: {}[{}]",
+		log.info("""
+				【云快充】{} 充电桩 ⬆️ BMS充电错误报文 - 交易流水号: {}
+				桩号: {}
+				枪号: {}
+				接收SPN2560=0x00 的充电机辨识报文超时: {}[{}]
+				接收SPN2560=0xAA 的充电机辨识报文超时: {}[{}]
+				接收充电机的时间同步和充电机最大输出能力报文超时: {}[{}]
+				接收充电机完成充电准备报文超时: {}[{}]
+				接收充电机充电状态报文超时: {}[{}]
+				接收充电机中止充电报文超时: {}[{}]
+				接收充电机充电统计报文超时: {}[{}]
+				接收BMS 和车辆的辨识报文超时: {}[{}]
+				接收电池充电参数报文超时: {}[{}]
+				接收BMS 完成充电准备报文超时: {}[{}]
+				接收电池充电总状态报文超时: {}[{}]
+				接收电池充电要求报文超时: {}[{}]
+				接收BMS 中止充电报文超时: {}[{}]
+				接收BMS 充电统计报文超时: {}[{}]
+				---------------------------------
+				""",
 			versionLabel, tradeNo, deviceId, gunNo, spn256000, getDesc(spn256000), spn2560AA, getDesc(spn2560AA), timeSync, getDesc(timeSync), chargePrepare, getDesc(chargePrepare), chargeStatus, getDesc(chargeStatus), stopCharge, getDesc(stopCharge), chargeStatistics, getDesc(chargeStatistics), bmsVin, getDesc(bmsVin), batteryChargeParams, getDesc(batteryChargeParams), bmsChargePrepare, getDesc(bmsChargePrepare), batteryChargeStatus, getDesc(batteryChargeStatus), batteryChargeRequirements, getDesc(batteryChargeRequirements), bmsStopCharge, getDesc(bmsStopCharge), bmsChargeStatistics, getDesc(bmsChargeStatistics));
 	}
 

@@ -94,7 +94,27 @@ public class YkcV15HandShakeUpCmd extends YkcCmdExecutor { // 充电握手
 
 		String bmsSoftVersion = HexUtil.encodeHexStr(bmsSoftVersionBytes);
 
-		log.info("【云快充】{} ⬆️ 充电握手 - 交易流水号: {} 桩号: {} 枪号: {} BMS 通信协议版本号: {} BMS 电池类型: {} BMS 整车动力蓄电池系统额定容量: {}Ah BMS 整车动力蓄电池系统额定总电压: {}V BMS 电池生产厂商名称: {} BMS 电池组序号: {} BMS 电池组生产日期年: {} BMS 电池组生产日期月: {} BMS 电池组生产日期日: {} BMS 电池组充电次数: {} BMS 电池组产权标识: {} VIN: {} BMS 软件版本号: {}",
-			versionLabel, tradeNo, deviceId, gunNo, bmsVersion, batteryType, totalBatteryCapacity, totalBatteryVol, batteryProducer, batteryGroupNo, batteryGroupYear, batteryGroupMonth, batteryGroupDay, batteryGroupChargeTimes, batteryGroupOwnership, vin, bmsSoftVersion);
+		log.info("""
+				【云快充】{} ⬆️ 充电握手 - 交易流水号: {}
+				桩号: {}
+				枪号: {}
+				BMS 通信协议版本号: {}
+				BMS 电池类型: {}
+				BMS 整车动力蓄电池系统额定容量: {}Ah
+				BMS 整车动力蓄电池系统额定总电压: {}V
+				BMS 电池生产厂商名称: {}
+				BMS 电池组序号: {}
+				BMS 电池组生产日期年: {}
+				BMS 电池组生产日期月: {}
+				BMS 电池组生产日期日: {}
+				BMS 电池组充电次数: {}
+				BMS 电池组产权标识: {}
+				VIN: {}
+				BMS 软件版本号: {}
+				---------------------------------
+				""",
+			versionLabel, tradeNo, deviceId, gunNo, bmsVersion, batteryType, totalBatteryCapacity, totalBatteryVol,
+			batteryProducer, batteryGroupNo, batteryGroupYear, batteryGroupMonth, batteryGroupDay, batteryGroupChargeTimes,
+			batteryGroupOwnership, vin, bmsSoftVersion);
 	}
 }
