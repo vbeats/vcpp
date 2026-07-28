@@ -1,6 +1,9 @@
 server:
   port: 10086
   shutdown: graceful
+  servlet:
+    session:
+      persistent: false
 
 spring:
   profiles:
