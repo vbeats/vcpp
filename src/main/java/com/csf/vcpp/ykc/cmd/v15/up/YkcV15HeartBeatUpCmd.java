@@ -17,7 +17,7 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.HEARTBEAT, protocols = {V15, V16, V17, V18, V20})
+@ProtocolCmd(value = FrameType.HEARTBEAT, protocols = {V15, V16, V17, V18, V21})
 public class YkcV15HeartBeatUpCmd extends YkcCmdExecutor { // 心跳
 
 	private final YkcV15HeartBeatDownCmd ykcV15HeartBeatDownCmd;

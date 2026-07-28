@@ -17,5 +17,5 @@ public class AppConfig {
 	private Integer ykc16Port; // ykc1.6 监听端口
 	private Integer ykc17Port; // ykc1.7 监听端口
 	private Integer ykc18Port; // ykc1.8 监听端口
-	private Integer ykc20Port; // ykc2.0 监听端口
+	private Integer ykc21Port; // ykc2.1 监听端口
 }

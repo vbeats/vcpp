@@ -1,7 +1,15 @@
+spring:
+  rabbitmq:
+    host: 10.88.0.80
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: vcpp
+    listener:
+      simple:
+        acknowledge-mode: manual
+        prefetch: 1
+
 vcpp:
   api: http://localhost
-  mqtt:
-    host: tcp://10.88.0.81:1883
-    client-id: vcpp-1
-    username: admin
-    password: admin123456
+  node-id: 1

@@ -46,6 +46,7 @@ public class YkcV15RealTimeDataUpCmd extends YkcCmdExecutor { // 实时监测数
 		byte gunStatus = body.readByte(); // 状态
 
 		byte gw = body.readByte();// 枪是否归位   0x00 否 0x01 是0x02 未知
+
 		byte cq = body.readByte(); // 是否插枪 0x00 否 0x01 是
 
 		// 输出电压

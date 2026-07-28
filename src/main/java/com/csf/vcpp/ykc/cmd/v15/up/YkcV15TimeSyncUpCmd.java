@@ -19,7 +19,7 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.TIME_SYNC_ACK, protocols = {V15, V16, V17, V18, V20})
+@ProtocolCmd(value = FrameType.TIME_SYNC_ACK, protocols = {V15, V16, V17, V18, V21})
 public class YkcV15TimeSyncUpCmd extends YkcCmdExecutor { // 对时设置应答
 
 	@Override

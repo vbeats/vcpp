@@ -18,7 +18,7 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.BILLING_VERIFY_MODEL, protocols = {V15, V16, V17, V18, V20})
+@ProtocolCmd(value = FrameType.BILLING_VERIFY_MODEL_ACK, protocols = {V15, V16, V17, V18, V21})
 public class YkcV15BillingVerifyModelDownCmd extends YkcCmdExecutor {
 	@Override
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {

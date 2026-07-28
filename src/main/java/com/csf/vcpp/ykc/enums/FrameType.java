@@ -138,7 +138,7 @@ public enum FrameType {
 	REMOTE_CHARGE2((short) 0xA8, "运营平台远程控制启机"), // ⬇️
 
 
-	// --------------v.20+------------------
+	// --------------v.21+------------------
 	VIN_UPLOAD((short) 0xA9, "充电桩上报vin 码"), // ⬆️
 	VIN_UPLOAD_ACK((short) 0xAA, "充电桩上报vin 码回复确认"), // ⬇️
 	;

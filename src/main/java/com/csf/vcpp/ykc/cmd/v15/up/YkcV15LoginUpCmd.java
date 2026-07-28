@@ -51,7 +51,7 @@ public class YkcV15LoginUpCmd extends YkcCmdExecutor {    // 充电桩登录上�
 
 		byte[] simBytes = new byte[10];
 		body.readBytes(simBytes);
-		long sim = BcdUtil.bcdBytesToLong(simBytes); // sim卡号
+		String sim = BcdUtil.bcdBytesToHex(simBytes); // sim卡号
 
 		/**
 		 * 0x00 移动
@@ -67,11 +67,11 @@ public class YkcV15LoginUpCmd extends YkcCmdExecutor {    // 充电桩登录上�
 			枪数量: {}
 			通信协议版本: {}
 			mcu程序版本: {}
-			网络连接类型: {}
+			网络连接类型: {}[{}]
 			sim卡号: {}
 			运营商: {}[{}]
 			---------------------------------
-			""", versionLabel, deviceId, pileType, getPileTypeDesc(pileType), gunCount, protocolVersion, mcuVersion, netType, sim, supplier, getSupplierDesc(supplier));
+			""", versionLabel, deviceId, pileType, getPileTypeDesc(pileType), gunCount, protocolVersion, mcuVersion, netType, getNetTypeDesc(netType), sim, supplier, getSupplierDesc(supplier));
 
 		// todo login valid
 		// R res = apiClient.login();
@@ -110,6 +110,15 @@ public class YkcV15LoginUpCmd extends YkcCmdExecutor {    // 充电桩登录上�
 			case 0x03 -> "联通";
 			case 0x04 -> "其他";
 			default -> "未知";
+		};
+	}
+
+	private String getNetTypeDesc(short netType) {
+		return switch (netType) {
+			case 0x00 -> "SIM卡";
+			case 0x01 -> "LAN";
+			case 0x02 -> "WAN";
+			default -> "其它";
 		};
 	}
 }

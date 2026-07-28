@@ -17,21 +17,25 @@ tcp 服务端口:
 云快充: 1.6 - 9848
 云快充: 1.7 - 9849
 云快充: 1.8 - 9850
-云快充: 2.0 - 9851
+云快充: 2.1 - 9851
 ```
 
 ## 桩号
 
 云快充: 14位长整数
 
-## 平台端消息通信 MQTT
+## 平台端消息通信 MQ
 
-> 桩 == 平台 MQTT 消息通信
+### rabbitmq
 
-- 平台指令 topic: vcpp/cmd/{充电桩号}
-- 设备状态 / 数据 topic: vcpp/data/{充电桩号}
+```bash
 
-多实例部署时, 每个实例指定不同的`vcpp.mqtt.client-id`
+1. 平台 ⬇️ cmd指令: vcpp.cmd (fanout) -- vcpp.cmd.queue.[node_id]
+
+2. vcpp ⬆️ 数据: vcpp.data (direct) -- vcpp.data.queue.[server_id]
+
+2. vcpp ⬆️ 交易记录: vcpp.trade_order (direct) -- vcpp.trade_order.[server_id]
+```
 
 ## 报文demo
 

@@ -6,5 +6,5 @@ public class YkcProtocolConst {
 	public static final String V16 = "v16";
 	public static final String V17 = "v17";
 	public static final String V18 = "v18";
-	public static final String V20 = "v20";
+	public static final String V21 = "v21";
 }

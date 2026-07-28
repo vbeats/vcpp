@@ -30,11 +30,12 @@ public class YkcMsgData implements Serializable {
 	private byte gunNo; // 枪号
 
 	private byte[] deviceIdBytes; // 7字节 桩号
+
 	private byte loginRes; // 登录结果 0x00 登录成功 0x01 登录失败
 
 	private short billingModelNo; // 计费模型编号
 
-	private List<BillingSection> billingSections; // 计费区间段列表
+	private List<BillingSection> billingSections; // 计费区段 顺序排列 [{电费,服务费}]
 
 	private List<BillingModel> billingModels; // 48时段计费模型
 
