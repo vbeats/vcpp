@@ -28,7 +28,7 @@ public class YkcChannelHandler extends ChannelInitializer<SocketChannel> {
 	protected void initChannel(SocketChannel ch) throws Exception {
 		ChannelPipeline pipeline = ch.pipeline();
 
-		pipeline.addLast(new LengthFieldBasedFrameDecoder(65538, 1, 1, 2, 0, true));
+		pipeline.addLast(new LengthFieldBasedFrameDecoder(65540, 1, 1, 2, 0, true));
 
 		// todo 打开idle debug
 		// pipeline.addLast(new IdleStateHandler(30L, 0L, 0L, TimeUnit.SECONDS));

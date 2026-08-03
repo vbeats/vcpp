@@ -24,18 +24,14 @@ tcp 服务端口:
 
 云快充: 14位长整数
 
-## 平台端消息通信 MQ
+## 平台端消息通信 MQTT
 
-### rabbitmq
+- 平台⬇️指令 topic: vcpp/cmd/{充电桩号}
+- 设备⬆️状态 / 一般数据 topic: vcpp/data/{充电桩号}
+- 设备⬆️登录 / 电价 ... 运营信息: vcpp/ops/{充电桩号}
+- 设备⬆️订单 topic: vcpp/trade/{充电桩号}
 
-```bash
-
-1. 平台 ⬇️ cmd指令: vcpp.cmd (fanout) -- vcpp.cmd.queue.[node_id]
-
-2. vcpp ⬆️ 数据: vcpp.data (direct) -- vcpp.data.queue.[server_id]
-
-2. vcpp ⬆️ 交易记录: vcpp.trade_order (direct) -- vcpp.trade_order.[server_id]
-```
+多实例部署时, 每个实例指定不同的`vcpp.mqtt.client-id`
 
 ## 报文demo
 

@@ -2,7 +2,6 @@ package com.csf.vcpp.ykc.cmd.v15.up;
 
 import com.alibaba.fastjson2.JSON;
 import com.csf.vcpp.annotation.ProtocolCmd;
-import com.csf.vcpp.api.ApiClient;
 import com.csf.vcpp.model.BillingModel;
 import com.csf.vcpp.model.BillingSection;
 import com.csf.vcpp.utils.BcdUtil;
@@ -24,7 +23,6 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @ProtocolCmd(value = FrameType.BILLING_MODEL, protocols = {V15, V16, V17, V18})
 public class YkcV15BillingModelUpCmd extends YkcCmdExecutor { // 计费模型请求  尖峰平谷模式
 
-	private final ApiClient apiClient;
 	private final YkcV15BillingModelDownCmd ykcV15BillingModelDownCmd;
 
 	@Override

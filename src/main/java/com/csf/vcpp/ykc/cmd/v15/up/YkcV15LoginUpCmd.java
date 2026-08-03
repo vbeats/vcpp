@@ -1,7 +1,6 @@
 package com.csf.vcpp.ykc.cmd.v15.up;
 
 import com.csf.vcpp.annotation.ProtocolCmd;
-import com.csf.vcpp.api.ApiClient;
 import com.csf.vcpp.utils.BcdUtil;
 import com.csf.vcpp.ykc.cmd.v15.down.YkcV15LoginDownCmd;
 import com.csf.vcpp.ykc.cmd.v15.down.YkcV15TimeSyncDownCmd;
@@ -27,7 +26,6 @@ public class YkcV15LoginUpCmd extends YkcCmdExecutor {    // 充电桩登录上�
 
 	private final YkcV15LoginDownCmd ykcV15LoginDownCmd;
 	private final YkcV15TimeSyncDownCmd ykcV15TimeSyncDownCmd;
-	private final ApiClient apiClient;
 
 	@Override
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
@@ -73,8 +71,8 @@ public class YkcV15LoginUpCmd extends YkcCmdExecutor {    // 充电桩登录上�
 			---------------------------------
 			""", versionLabel, deviceId, pileType, getPileTypeDesc(pileType), gunCount, protocolVersion, mcuVersion, netType, getNetTypeDesc(netType), sim, supplier, getSupplierDesc(supplier));
 
-		// todo login valid
-		// R res = apiClient.login();
+		// todo send login mqtt msg
+		// login res ==> mqtt handle
 
 		boolean loginValid = true;
 
