@@ -9,7 +9,7 @@ import com.csf.vcpp.ykc.YkcChannelHandler;
 import com.csf.vcpp.ykc.context.YkcServerContext;
 import com.csf.vcpp.ykc.enums.FrameType;
 import com.csf.vcpp.ykc.executor.YkcCmdExecutor;
-import com.csf.vcpp.ykc.router.YkcDataRouter;
+import com.csf.vcpp.ykc.router.YkcUpDataRouter;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioIoHandler;
@@ -24,13 +24,13 @@ import java.util.Set;
 public abstract class AbstractYkcServerBootstrap implements InitializingBean, DisposableBean {
 
 	protected final AppConfig appConfig;
-	protected final YkcDataRouter ykcDataRouter;
+	protected final YkcUpDataRouter ykcUpDataRouter;
 
 	private Channel channel;
 
-	protected AbstractYkcServerBootstrap(AppConfig appConfig, YkcDataRouter ykcDataRouter) {
+	protected AbstractYkcServerBootstrap(AppConfig appConfig, YkcUpDataRouter ykcUpDataRouter) {
 		this.appConfig = appConfig;
-		this.ykcDataRouter = ykcDataRouter;
+		this.ykcUpDataRouter = ykcUpDataRouter;
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public abstract class AbstractYkcServerBootstrap implements InitializingBean, Di
 				.childOption(ChannelOption.SO_KEEPALIVE, true)
 				.childOption(ChannelOption.SO_REUSEADDR, true)
 				.childOption(ChannelOption.SO_LINGER, 0)
-				.childHandler(new YkcChannelHandler(ykcDataRouter, getVersionLabel()))
+				.childHandler(new YkcChannelHandler(ykcUpDataRouter, getVersionLabel()))
 			;
 
 			ChannelFuture future = bootstrap.bind("0.0.0.0", port).sync();

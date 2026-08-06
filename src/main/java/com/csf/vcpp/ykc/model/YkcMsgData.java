@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -19,6 +20,8 @@ public class YkcMsgData implements Serializable {
 	// 数据帧头信息
 
 	private int sequence; // 2字节 序列号
+
+	private LocalDateTime eventTime; // 发送时间  v2.1+
 
 	private byte encryptFlag; // 1字节 加密标志 0x00 不加密  0x01 des加密
 

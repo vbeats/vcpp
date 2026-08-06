@@ -18,8 +18,8 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.BILLING_VERIFY_MODEL_ACK, protocols = {V15, V16, V17, V18, V21})
-public class YkcV15BillingVerifyModelDownCmd extends YkcCmdExecutor {
+@ProtocolCmd(value = FrameType.BILLING_MODEL_VERIFY_ACK, protocols = {V15, V16, V17})
+public class YkcV15BillingModelVerifyDownCmd extends YkcCmdExecutor {
 	@Override
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
 		// 应答
@@ -30,7 +30,7 @@ public class YkcV15BillingVerifyModelDownCmd extends YkcCmdExecutor {
 		//  一律应答 不一致  让桩侧重新获取最新的 计费模型
 		msgBody.writeByte(0x01);  // 0x00 一致  0x01 不一致
 
-		ByteBuf res = YkcAckUtil.createAck(data.getSequence(), data.getEncryptFlag(), FrameType.BILLING_VERIFY_MODEL_ACK, msgBody);
+		ByteBuf res = YkcAckUtil.createAck(data.getSequence(), data.getEncryptFlag(), FrameType.BILLING_MODEL_VERIFY_ACK, msgBody);
 
 		log.info("【云快充】{} ⬇️ 计费模型验证请求应答Hex: {}", versionLabel, new String(HexUtil.encodeHex(res.array())).toUpperCase());
 

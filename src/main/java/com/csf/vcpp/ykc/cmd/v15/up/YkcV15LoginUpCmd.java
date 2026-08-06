@@ -83,6 +83,7 @@ public class YkcV15LoginUpCmd extends YkcCmdExecutor {    // 充电桩登录上�
 			YkcServerContext.DEVICE_CHANNEL_MAP.put(deviceId, channel);
 			YkcServerContext.CHANNEL_DEVICE_MAP.put(channel.id().asLongText(), deviceId);
 			loginRes = 0x00;
+			log.warn("【云快充】{} ⬆️ 登录请求 - 桩号: {} 登录成功", versionLabel, deviceId);
 		} else {
 			log.warn("【云快充】{} ⬆️ 登录请求 - 桩号: {} 登录验证未通过", versionLabel, deviceId);
 		}
@@ -91,14 +92,21 @@ public class YkcV15LoginUpCmd extends YkcCmdExecutor {    // 充电桩登录上�
 
 		ykcV15LoginDownCmd.execute(channel, versionLabel, data);
 
-		// 下发对时设置
 		if (loginRes == 0x00) {
+			// 下发对时设置
 			ykcV15TimeSyncDownCmd.execute(channel, versionLabel, data);
+
+			// 下发桩屏幕二维码
+
 		}
 	}
 
 	private String getPileTypeDesc(short pileType) {
-		return pileType == 0 ? "直流桩" : "交流桩";
+		return switch (pileType) {
+			case 0x00 -> "直流桩";
+			case 0x01 -> "交流桩";
+			default -> "未知";
+		};
 	}
 
 	private String getSupplierDesc(short supplier) {

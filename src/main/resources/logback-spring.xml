@@ -27,7 +27,7 @@
     <appender name="INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- 相对路径（项目根目录/logs，避免权限问题） -->
-            <fileNamePattern>./logs/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>./logs/${springAppName}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxHistory>10</maxHistory> <!-- 保留10天 -->
             <maxFileSize>1GB</maxFileSize> <!-- 单个文件1GB -->
             <totalSizeCap>10GB</totalSizeCap> <!-- 总大小10GB -->

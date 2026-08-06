@@ -2,7 +2,7 @@ package com.csf.vcpp.ykc.cmd.v15.up;
 
 import com.csf.vcpp.annotation.ProtocolCmd;
 import com.csf.vcpp.utils.BcdUtil;
-import com.csf.vcpp.ykc.cmd.v15.down.YkcV15BillingVerifyModelDownCmd;
+import com.csf.vcpp.ykc.cmd.v15.down.YkcV15BillingModelVerifyDownCmd;
 import com.csf.vcpp.ykc.enums.FrameType;
 import com.csf.vcpp.ykc.executor.YkcCmdExecutor;
 import com.csf.vcpp.ykc.model.YkcMsgData;
@@ -17,10 +17,10 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.BILLING_VERIFY_MODEL, protocols = {V15, V16, V17, V18, V21})
-public class YkcV15BillingVerifyModelUpCmd extends YkcCmdExecutor { // 计费模型验证请求
+@ProtocolCmd(value = FrameType.BILLING_MODEL_VERIFY, protocols = {V15, V16, V17})
+public class YkcV15BillingModelVerifyUpCmd extends YkcCmdExecutor { // 计费模型验证请求
 
-	private final YkcV15BillingVerifyModelDownCmd ykcV15BillingVerifyModelDownCmd;
+	private final YkcV15BillingModelVerifyDownCmd ykcV15BillingVerifyModelDownCmd;
 
 	@Override
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {

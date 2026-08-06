@@ -15,9 +15,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MqttCmdListener implements MqttCallback {// 订阅平台指令
 
+	private final MqttMsgService mqttCmdService;
+
 	@Override
 	public void disconnected(MqttDisconnectResponse disconnectResponse) {
-		log.warn("mqtt client disconnected....");
+		log.warn("mqtt client disconnected.... : {}", disconnectResponse);
 	}
 
 	@Override
@@ -27,7 +29,7 @@ public class MqttCmdListener implements MqttCallback {// 订阅平台指令
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		log.info("vcpp rec 平台指令: {}", new String(message.getPayload()));
+		mqttCmdService.handleMsg(topic, message);
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package com.csf.vcpp.ykc.cmd.v15.down;
 
 import cn.hutool.core.util.HexUtil;
 import com.csf.vcpp.annotation.ProtocolCmd;
+import com.csf.vcpp.cmd.CmdMsg;
 import com.csf.vcpp.utils.BcdUtil;
 import com.csf.vcpp.ykc.enums.FrameType;
 import com.csf.vcpp.ykc.executor.YkcCmdExecutor;
@@ -19,7 +20,7 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.REMOTE_RESTART, protocols = {V15, V16, V17})
+@ProtocolCmd(value = FrameType.REMOTE_RESTART, protocols = {V15, V16, V17, V18})
 public class YkcV15RemoteRestartDownCmd extends YkcCmdExecutor { // 远程重启
 	@Override
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
@@ -40,5 +41,14 @@ public class YkcV15RemoteRestartDownCmd extends YkcCmdExecutor { // 远程重启
 		log.info("【云快充】{} ⬇️ 远程重启Hex: {}", versionLabel, new String(HexUtil.encodeHex(res.array())).toUpperCase());
 
 		channel.writeAndFlush(res);
+	}
+
+	@Override
+	public YkcMsgData covertCmdData2YkcMsgData(CmdMsg cmdMsg) {
+		YkcMsgData data = new YkcMsgData();
+		data.setEncryptFlag(cmdMsg.getEncryptFlag());
+		data.setDeviceIdBytes(BcdUtil.longToBcdBytes(cmdMsg.getDeviceId()));
+
+		return data;
 	}
 }

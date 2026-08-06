@@ -19,8 +19,8 @@ public enum FrameType {
 	HEARTBEAT((short) 0x03, "充电桩心跳包"), // ⬆️
 	HEARTBEAT_ACK((short) 0x04, "心跳包应答"), // ⬇️
 
-	BILLING_VERIFY_MODEL((short) 0x05, "计费模型验证请求"), // ⬆️
-	BILLING_VERIFY_MODEL_ACK((short) 0x06, "计费模型验证请求应答"), // ⬇️
+	BILLING_MODEL_VERIFY((short) 0x05, "计费模型验证请求"), // ⬆️
+	BILLING_MODEL_VERIFY_ACK((short) 0x06, "计费模型验证请求应答"), // ⬇️
 
 	BILLING_MODEL((short) 0x09, "计费模型请求"), // ⬆️
 	BILLING_MODEL_ACK((short) 0x0A, "计费模型请求应答"), // ⬇️
@@ -66,7 +66,7 @@ public enum FrameType {
 	CARD_QUERY_UP((short) 0x47, "离线卡数据查询应答"), // ⬆️
 	CARD_QUERY_ACK((short) 0x48, "离线卡数据查询"), // ⬇️
 
-	//v2.0...
+	//v2.1...
 	DEVICE_ERROR_ACK((short) 0x49, "设备故障上送回复确认"), // ⬇️
 	DEVICE_ERROR((short) 0x50, "设备故障上送"), // ⬆️
 
@@ -93,7 +93,7 @@ public enum FrameType {
 	MAX_POWER_ACK((short) 0x59, "默认最大功率下发应答"), // ⬇️  v1.8+
 	MAX_POWER((short) 0x60, "默认最大功率下发"), // ⬇️  v1.8+
 
-	// 2.0.....
+	// 2.1.....
 	QR_SETTING_ACK((short) 0x5A, "二维码设置应答"), // ⬆️
 	QR_SETTING((short) 0x5B, "二维码设置"), // ⬇️
 

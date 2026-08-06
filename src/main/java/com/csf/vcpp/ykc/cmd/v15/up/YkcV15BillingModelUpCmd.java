@@ -20,7 +20,7 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.BILLING_MODEL, protocols = {V15, V16, V17, V18})
+@ProtocolCmd(value = FrameType.BILLING_MODEL, protocols = {V15, V16, V17})
 public class YkcV15BillingModelUpCmd extends YkcCmdExecutor { // 计费模型请求  尖峰平谷模式
 
 	private final YkcV15BillingModelDownCmd ykcV15BillingModelDownCmd;

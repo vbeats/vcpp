@@ -26,12 +26,17 @@ tcp 服务端口:
 
 ## 平台端消息通信 MQTT
 
-- 平台⬇️指令 topic: vcpp/cmd/{充电桩号}
+- 平台⬇️指令 topic: vcpp/cmd
+
+  > 下行指令: {protocol:ykc, versionLabel:V18, cmdType: CmdType, deviceId:桩号, data: 业务数据}
+
 - 设备⬆️状态 / 一般数据 topic: vcpp/data/{充电桩号}
 - 设备⬆️登录 / 电价 ... 运营信息: vcpp/ops/{充电桩号}
 - 设备⬆️订单 topic: vcpp/trade/{充电桩号}
 
-多实例部署时, 每个实例指定不同的`vcpp.mqtt.client-id`
+## 兼容性处理
+
+> 不同厂商主板不一定严格按照标准协议实现 不兼容的地方额外定义 ProtocolCmd.protocols 单独处理
 
 ## 报文demo
 

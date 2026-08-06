@@ -2,7 +2,7 @@ package com.csf.vcpp.ykc.cmd.v16;
 
 import com.csf.vcpp.config.AppConfig;
 import com.csf.vcpp.ykc.cmd.AbstractYkcServerBootstrap;
-import com.csf.vcpp.ykc.router.YkcDataRouter;
+import com.csf.vcpp.ykc.router.YkcUpDataRouter;
 import org.springframework.stereotype.Service;
 
 import static com.csf.vcpp.ykc.consts.YkcProtocolConst.V16;
@@ -10,8 +10,8 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.V16;
 @Service
 public class YkcV16ServerBootstrap extends AbstractYkcServerBootstrap {
 
-	public YkcV16ServerBootstrap(AppConfig appConfig, YkcDataRouter ykcDataRouter) {
-		super(appConfig, ykcDataRouter);
+	public YkcV16ServerBootstrap(AppConfig appConfig, YkcUpDataRouter ykcUpDataRouter) {
+		super(appConfig, ykcUpDataRouter);
 	}
 
 	@Override

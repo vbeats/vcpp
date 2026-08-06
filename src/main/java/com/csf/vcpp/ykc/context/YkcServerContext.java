@@ -10,12 +10,12 @@ public class YkcServerContext {
 
 	// key: 协议版本 V15 / V16 ... + "_" + 帧类型
 	// value: cmd执行器实例
-	public static final Map<String, YkcCmdExecutor> EXECUTER_MAP = new ConcurrentHashMap<>(64);
+	public static final Map<String, YkcCmdExecutor> EXECUTER_MAP = new ConcurrentHashMap<>(256);
 
 	// ----------------- 充电桩登录成功后 放入 -----------------
 	// 桩号 === Channel
-	public static final Map<Long, Channel> DEVICE_CHANNEL_MAP = new ConcurrentHashMap<>(32);
+	public static final Map<Long, Channel> DEVICE_CHANNEL_MAP = new ConcurrentHashMap<>(100000);
 
 	// Channel id === 桩号
-	public static final Map<String, Long> CHANNEL_DEVICE_MAP = new ConcurrentHashMap<>(32);
+	public static final Map<String, Long> CHANNEL_DEVICE_MAP = new ConcurrentHashMap<>(100000);
 }

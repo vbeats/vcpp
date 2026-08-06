@@ -8,6 +8,8 @@ server:
 spring:
   profiles:
     active: dev
+  application:
+    name: vcpp
 
 logging:
   config: classpath:logback-spring.xml

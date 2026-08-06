@@ -3,6 +3,7 @@ package com.csf.vcpp.ykc.cmd.v15.up;
 import com.csf.vcpp.annotation.ProtocolCmd;
 import com.csf.vcpp.utils.BcdUtil;
 import com.csf.vcpp.ykc.cmd.v15.down.YkcV15HeartBeatDownCmd;
+import com.csf.vcpp.ykc.context.YkcServerContext;
 import com.csf.vcpp.ykc.enums.FrameType;
 import com.csf.vcpp.ykc.executor.YkcCmdExecutor;
 import com.csf.vcpp.ykc.model.YkcMsgData;
@@ -11,14 +12,15 @@ import io.netty.channel.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.HEARTBEAT, protocols = {V15, V16, V17, V18, V21})
-public class YkcV15HeartBeatUpCmd extends YkcCmdExecutor { // 心跳
+@ProtocolCmd(value = FrameType.HEARTBEAT, protocols = {V15, V16, V17, V18})
+public class YkcV15HeartBeatUpCmd extends YkcCmdExecutor { // 心跳 10s周期
 
 	private final YkcV15HeartBeatDownCmd ykcV15HeartBeatDownCmd;
 
@@ -35,6 +37,12 @@ public class YkcV15HeartBeatUpCmd extends YkcCmdExecutor { // 心跳
 		byte gunStatus = body.readByte(); // 枪状态 0x00：正常 0x01：故障
 
 		log.info("【云快充】{} ⬆️ 心跳💓 - 桩号 : {} 枪号 : {} 枪状态: {}[{}]", versionLabel, deviceId, gunNo, gunStatus, getGunStatusDesc(gunStatus));
+
+		Channel ch = YkcServerContext.DEVICE_CHANNEL_MAP.get(deviceId);
+		if (ObjectUtils.isEmpty(ch)) {
+			channel.close();
+			return;
+		}
 
 		data.setDeviceIdBytes(deviceIdBytes);
 		data.setGunNo(gunNo);

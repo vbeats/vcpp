@@ -22,7 +22,7 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.TIME_SYNC, protocols = {V15, V16, V17, V18, V21})
+@ProtocolCmd(value = FrameType.TIME_SYNC, protocols = {V15, V16, V17, V18})
 public class YkcV15TimeSyncDownCmd extends YkcCmdExecutor {  // 对时设置
 
 	@Override

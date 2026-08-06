@@ -1,7 +1,7 @@
 package com.csf.vcpp.ykc;
 
 import com.csf.vcpp.ykc.context.YkcServerContext;
-import com.csf.vcpp.ykc.router.YkcDataRouter;
+import com.csf.vcpp.ykc.router.YkcUpDataRouter;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -18,11 +18,11 @@ public class YkcChannelInboundHandler extends SimpleChannelInboundHandler<String
 
 	private static final ExecutorService CPP_EXECUTOR = Executors.newThreadPerTaskExecutor(Thread.ofVirtual().name("vcpp-ykc").factory());
 
-	private final YkcDataRouter ykcDataRouter;
+	private final YkcUpDataRouter ykcUpDataRouter;
 	private final String versionLabel;
 
-	public YkcChannelInboundHandler(YkcDataRouter ykcDataRouter, String versionLabel) {
-		this.ykcDataRouter = ykcDataRouter;
+	public YkcChannelInboundHandler(YkcUpDataRouter ykcUpDataRouter, String versionLabel) {
+		this.ykcUpDataRouter = ykcUpDataRouter;
 		this.versionLabel = versionLabel;
 	}
 
@@ -51,7 +51,7 @@ public class YkcChannelInboundHandler extends SimpleChannelInboundHandler<String
 	protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
 		// 提前捕获 channel 引用，避免 lambda 捕获整个 ChannelHandlerContext
 		Channel channel = ctx.channel();
-		CPP_EXECUTOR.execute(() -> ykcDataRouter.route(channel, versionLabel, msg.toUpperCase()));
+		CPP_EXECUTOR.execute(() -> ykcUpDataRouter.route(channel, versionLabel, msg.toUpperCase()));
 	}
 
 	@Override
