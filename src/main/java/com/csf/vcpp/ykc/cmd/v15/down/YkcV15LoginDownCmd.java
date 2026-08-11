@@ -24,7 +24,7 @@ public class YkcV15LoginDownCmd extends YkcCmdExecutor { // 登录应答
 	@Override
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
 		ByteBuf msgBody = Unpooled.buffer(8);
-		msgBody.writeBytes(data.getDeviceIdBytes());
+		msgBody.writeBytes(data.getDeviceNoBytes());
 		msgBody.writeByte(data.getLoginRes()); // 登录结果
 
 		ByteBuf res = YkcAckUtil.createAck(data.getSequence(), data.getEncryptFlag(), FrameType.LOGIN_ACK, msgBody);

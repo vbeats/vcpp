@@ -23,7 +23,7 @@ public class CmdMsg<T> implements Serializable {
 
 	private CmdType cmdType; // 平台指令
 
-	private Long deviceId; // 桩号
+	private String deviceNo; // 桩号
 
 	private T data;
 }

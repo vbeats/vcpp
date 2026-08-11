@@ -30,9 +30,9 @@ public class YkcV15ChargeFinishUpCmd extends YkcCmdExecutor { // 充电结束
 		body.readBytes(tradeNoBytes);
 		String tradeNo = BcdUtil.toString(tradeNoBytes);  // 交易流水号
 
-		byte[] deviceIdBytes = new byte[7];
-		body.readBytes(deviceIdBytes);
-		Long deviceId = BcdUtil.bcdBytesToLong(deviceIdBytes);  // 桩号
+		byte[] deviceNoBytes = new byte[7];
+		body.readBytes(deviceNoBytes);
+		String deviceNo = BcdUtil.bcdBytesToHex(deviceNoBytes);  // 桩号
 
 		byte gunNo = body.readByte();// 枪号
 
@@ -76,6 +76,6 @@ public class YkcV15ChargeFinishUpCmd extends YkcCmdExecutor { // 充电结束
 				充电机编号: {}
 				---------------------------------
 				""",
-			versionLabel, tradeNo, deviceId, gunNo, soc, minVol, maxVol, minTemp, maxTemp, totalChargeTime, kwh, motorNo);
+			versionLabel, tradeNo, deviceNo, gunNo, soc, minVol, maxVol, minTemp, maxTemp, totalChargeTime, kwh, motorNo);
 	}
 }

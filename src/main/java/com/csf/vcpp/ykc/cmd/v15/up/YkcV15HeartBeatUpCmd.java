@@ -28,23 +28,23 @@ public class YkcV15HeartBeatUpCmd extends YkcCmdExecutor { // 心跳 10s周期
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
 		ByteBuf body = data.getMsgBody();
 
-		byte[] deviceIdBytes = new byte[7];
-		body.readBytes(deviceIdBytes);
-		Long deviceId = BcdUtil.bcdBytesToLong(deviceIdBytes);  // 桩号
+		byte[] deviceNoBytes = new byte[7];
+		body.readBytes(deviceNoBytes);
+		String deviceNo = BcdUtil.bcdBytesToHex(deviceNoBytes);  // 桩号
 
 		byte gunNo = body.readByte(); // 枪号
 
 		byte gunStatus = body.readByte(); // 枪状态 0x00：正常 0x01：故障
 
-		log.info("【云快充】{} ⬆️ 心跳💓 - 桩号 : {} 枪号 : {} 枪状态: {}[{}]", versionLabel, deviceId, gunNo, gunStatus, getGunStatusDesc(gunStatus));
+		log.info("【云快充】{} ⬆️ 心跳💓 - 桩号 : {} 枪号 : {} 枪状态: {}[{}]", versionLabel, deviceNo, gunNo, gunStatus, getGunStatusDesc(gunStatus));
 
-		Channel ch = YkcServerContext.DEVICE_CHANNEL_MAP.get(deviceId);
+		Channel ch = YkcServerContext.DEVICE_CHANNEL_MAP.get(deviceNo);
 		if (ObjectUtils.isEmpty(ch)) {
 			channel.close();
 			return;
 		}
 
-		data.setDeviceIdBytes(deviceIdBytes);
+		data.setDeviceNoBytes(deviceNoBytes);
 		data.setGunNo(gunNo);
 		ykcV15HeartBeatDownCmd.execute(channel, versionLabel, data);
 	}

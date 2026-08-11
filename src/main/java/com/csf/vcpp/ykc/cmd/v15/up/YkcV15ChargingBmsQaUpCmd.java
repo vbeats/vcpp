@@ -29,9 +29,9 @@ public class YkcV15ChargingBmsQaUpCmd extends YkcCmdExecutor { // 充电过程BM
 		body.readBytes(tradeNoBytes);
 		String tradeNo = BcdUtil.toString(tradeNoBytes);  // 交易流水号
 
-		byte[] deviceIdBytes = new byte[7];
-		body.readBytes(deviceIdBytes);
-		Long deviceId = BcdUtil.bcdBytesToLong(deviceIdBytes);  // 桩号
+		byte[] deviceNoBytes = new byte[7];
+		body.readBytes(deviceNoBytes);
+		String deviceNo = BcdUtil.bcdBytesToHex(deviceNoBytes);  // 桩号
 
 		byte gunNo = body.readByte(); // 枪号
 
@@ -90,7 +90,7 @@ public class YkcV15ChargingBmsQaUpCmd extends YkcCmdExecutor { // 充电过程BM
 				累计充电时间: {}min
 				---------------------------------
 				""",
-			versionLabel, tradeNo, deviceId, gunNo, voltageDemand, currentDemand, chargeMode, getDesc(chargeMode), voltageMeasurement, currentMeasurement, batteryMaxVol, batteryMaxVolGroup, soc, remainingChargeTime, voltageOutput, currentOutput, totalChargeTime);
+			versionLabel, tradeNo, deviceNo, gunNo, voltageDemand, currentDemand, chargeMode, getDesc(chargeMode), voltageMeasurement, currentMeasurement, batteryMaxVol, batteryMaxVolGroup, soc, remainingChargeTime, voltageOutput, currentOutput, totalChargeTime);
 	}
 
 	private String getDesc(byte mode) {

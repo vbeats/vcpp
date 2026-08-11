@@ -26,15 +26,15 @@ public class YkcV15BillingModelVerifyUpCmd extends YkcCmdExecutor { // 计费模
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
 		ByteBuf body = data.getMsgBody();
 
-		byte[] deviceIdBytes = new byte[7];
-		body.readBytes(deviceIdBytes);
-		Long deviceId = BcdUtil.bcdBytesToLong(deviceIdBytes);  // 桩号
+		byte[] deviceNoBytes = new byte[7];
+		body.readBytes(deviceNoBytes);
+		String deviceNo = BcdUtil.bcdBytesToHex(deviceNoBytes);  // 桩号
 
 		short billingModelNo = body.readShort();  // 计费模型编号  首次连接平台为0
 
-		log.info("【云快充】{} ⬆️ 计费模型验证请求 - 桩号: {}, 计费模型编号: {}", versionLabel, deviceId, billingModelNo);
+		log.info("【云快充】{} ⬆️ 计费模型验证请求 - 桩号: {}, 计费模型编号: {}", versionLabel, deviceNo, billingModelNo);
 
-		data.setDeviceIdBytes(deviceIdBytes);
+		data.setDeviceNoBytes(deviceNoBytes);
 		data.setBillingModelNo(billingModelNo);
 		ykcV15BillingVerifyModelDownCmd.execute(channel, versionLabel, data);
 	}

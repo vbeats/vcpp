@@ -31,9 +31,9 @@ public class YkcV15LoginUpCmd extends YkcCmdExecutor {    // 充电桩登录上�
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
 		ByteBuf body = data.getMsgBody();
 
-		byte[] deviceIdBytes = new byte[7];
-		body.readBytes(deviceIdBytes);
-		Long deviceId = BcdUtil.bcdBytesToLong(deviceIdBytes);  // 桩号
+		byte[] deviceNoBytes = new byte[7];
+		body.readBytes(deviceNoBytes);
+		String deviceNo = BcdUtil.bcdBytesToHex(deviceNoBytes);  // 桩号
 
 		short pileType = body.readUnsignedByte(); // 桩类型 0 表示直流桩，1 表示交流桩
 
@@ -69,10 +69,9 @@ public class YkcV15LoginUpCmd extends YkcCmdExecutor {    // 充电桩登录上�
 			sim卡号: {}
 			运营商: {}[{}]
 			---------------------------------
-			""", versionLabel, deviceId, pileType, getPileTypeDesc(pileType), gunCount, protocolVersion, mcuVersion, netType, getNetTypeDesc(netType), sim, supplier, getSupplierDesc(supplier));
+			""", versionLabel, deviceNo, pileType, getPileTypeDesc(pileType), gunCount, protocolVersion, mcuVersion, netType, getNetTypeDesc(netType), sim, supplier, getSupplierDesc(supplier));
 
-		// todo send login mqtt msg
-		// login res ==> mqtt handle
+		// todo login valid (http)
 
 		boolean loginValid = true;
 
@@ -80,15 +79,15 @@ public class YkcV15LoginUpCmd extends YkcCmdExecutor {    // 充电桩登录上�
 		byte loginRes = 0x01; // 0x00：登陆成功 0x01:登陆失败
 
 		if (loginValid) {
-			YkcServerContext.DEVICE_CHANNEL_MAP.put(deviceId, channel);
-			YkcServerContext.CHANNEL_DEVICE_MAP.put(channel.id().asLongText(), deviceId);
+			YkcServerContext.DEVICE_CHANNEL_MAP.put(deviceNo, channel);
+			YkcServerContext.CHANNEL_DEVICE_MAP.put(channel.id().asLongText(), deviceNo);
 			loginRes = 0x00;
-			log.warn("【云快充】{} ⬆️ 登录请求 - 桩号: {} 登录成功", versionLabel, deviceId);
+			log.warn("【云快充】{} ⬆️ 登录请求 - 桩号: {} 登录成功", versionLabel, deviceNo);
 		} else {
-			log.warn("【云快充】{} ⬆️ 登录请求 - 桩号: {} 登录验证未通过", versionLabel, deviceId);
+			log.warn("【云快充】{} ⬆️ 登录请求 - 桩号: {} 登录验证未通过", versionLabel, deviceNo);
 		}
 
-		data.setDeviceIdBytes(deviceIdBytes);
+		data.setDeviceNoBytes(deviceNoBytes);
 
 		ykcV15LoginDownCmd.execute(channel, versionLabel, data);
 

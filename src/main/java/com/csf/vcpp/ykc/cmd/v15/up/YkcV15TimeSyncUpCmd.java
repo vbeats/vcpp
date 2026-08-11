@@ -26,16 +26,16 @@ public class YkcV15TimeSyncUpCmd extends YkcCmdExecutor { // 对时设置应答
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
 		ByteBuf body = data.getMsgBody();
 
-		byte[] deviceIdBytes = new byte[7];
-		body.readBytes(deviceIdBytes);
-		Long deviceId = BcdUtil.bcdBytesToLong(deviceIdBytes);  // 桩号
+		byte[] deviceNoBytes = new byte[7];
+		body.readBytes(deviceNoBytes);
+		String deviceNo = BcdUtil.bcdBytesToHex(deviceNoBytes);  // 桩号
 
 		// 时间
 		byte[] timeBytes = new byte[7];
 		body.readBytes(timeBytes);
 		LocalDateTime time = CP56Time2aUtil.decode(timeBytes);
 
-		log.info("【云快充】{} ⬆️ 对时设置应答: 桩号 {} 设备时间: {}", versionLabel, deviceId, time);
+		log.info("【云快充】{} ⬆️ 对时设置应答: 桩号 {} 设备时间: {}", versionLabel, deviceNo, time);
 
 	}
 }

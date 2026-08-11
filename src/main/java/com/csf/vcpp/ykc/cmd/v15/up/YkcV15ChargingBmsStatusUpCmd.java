@@ -26,9 +26,9 @@ public class YkcV15ChargingBmsStatusUpCmd extends YkcCmdExecutor { // 充电过�
 		body.readBytes(tradeNoBytes);
 		String tradeNo = BcdUtil.toString(tradeNoBytes);  // 交易流水号
 
-		byte[] deviceIdBytes = new byte[7];
-		body.readBytes(deviceIdBytes);
-		Long deviceId = BcdUtil.bcdBytesToLong(deviceIdBytes);  // 桩号
+		byte[] deviceNoBytes = new byte[7];
+		body.readBytes(deviceNoBytes);
+		String deviceNo = BcdUtil.bcdBytesToHex(deviceNoBytes);  // 桩号
 
 		byte gunNo = body.readByte();// 枪号
 
@@ -90,7 +90,7 @@ public class YkcV15ChargingBmsStatusUpCmd extends YkcCmdExecutor { // 充电过�
 				BMS 充电禁止: {}[{}]
 				---------------------------------
 				""",
-			versionLabel, tradeNo, deviceId, gunNo, maxVoltageCell, maxTemperature, maxTemperatureCell, minTemperature, minTemperatureCell, voltageStatus,
+			versionLabel, tradeNo, deviceNo, gunNo, maxVoltageCell, maxTemperature, maxTemperatureCell, minTemperature, minTemperatureCell, voltageStatus,
 			getStatusDesc1(voltageStatus), socStatus, getStatusDesc1(socStatus), currentStatus, getStatusDesc3(currentStatus), temperatureStatus, getStatusDesc2(temperatureStatus),
 			insulationStatus, getStatusDesc3(insulationStatus), connectionStatus, getStatusDesc3(connectionStatus), chargeStatus, getStatusDesc4(chargeStatus));
 	}

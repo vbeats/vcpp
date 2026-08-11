@@ -29,17 +29,17 @@ public class YkcV15BillingModelUpCmd extends YkcCmdExecutor { // 计费模型请
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
 		ByteBuf body = data.getMsgBody();
 
-		byte[] deviceIdBytes = new byte[7];
-		body.readBytes(deviceIdBytes);
-		Long deviceId = BcdUtil.bcdBytesToLong(deviceIdBytes);  // 桩号
+		byte[] deviceNoBytes = new byte[7];
+		body.readBytes(deviceNoBytes);
+		String deviceNo = BcdUtil.bcdBytesToHex(deviceNoBytes);  // 桩号
 
-		log.info("【云快充】{} ⬆️ 计费模型请求 - 桩号: {}", versionLabel, deviceId);
+		log.info("【云快充】{} ⬆️ 计费模型请求 - 桩号: {}", versionLabel, deviceNo);
 
 		// todo 获取 平台计费模型
 
 		//R<> priceRes = apiClient.getBillingModel(params);
 
-		data.setDeviceIdBytes(deviceIdBytes);
+		data.setDeviceNoBytes(deviceNoBytes);
 		data.setBillingSections(JSON.parseArray("[\n" +
 			"            {\n" +
 			"                \"ep\": \"0.01\",\n" +

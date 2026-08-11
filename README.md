@@ -28,7 +28,7 @@ tcp 服务端口:
 
 - 平台⬇️指令 topic: vcpp/cmd
 
-  > 下行指令: {protocol:ykc, versionLabel:V18, cmdType: CmdType, deviceId:桩号, data: 业务数据}
+  > 下行指令: {protocol:ykc, versionLabel:V18, cmdType: CmdType, deviceNo:桩号, data: 业务数据}
 
 - 设备⬆️状态 / 一般数据 topic: vcpp/data/{充电桩号}
 - 设备⬆️登录 / 电价 ... 运营信息: vcpp/ops/{充电桩号}

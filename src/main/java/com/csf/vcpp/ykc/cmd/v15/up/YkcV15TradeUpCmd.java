@@ -38,9 +38,9 @@ public class YkcV15TradeUpCmd extends YkcCmdExecutor { // 交易记录
 		body.readBytes(tradeNoBytes);
 		String tradeNo = BcdUtil.toString(tradeNoBytes);  // 交易流水号
 
-		byte[] deviceIdBytes = new byte[7];
-		body.readBytes(deviceIdBytes);
-		Long deviceId = BcdUtil.bcdBytesToLong(deviceIdBytes);  // 桩号
+		byte[] deviceNoBytes = new byte[7];
+		body.readBytes(deviceNoBytes);
+		String deviceNo = BcdUtil.bcdBytesToHex(deviceNoBytes);  // 桩号
 
 		byte gunNo = body.readByte();// 枪号
 
@@ -168,7 +168,7 @@ public class YkcV15TradeUpCmd extends YkcCmdExecutor { // 交易记录
 				物理卡号: {}
 				---------------------------------
 				""",
-			versionLabel, tradeNo, deviceId, gunNo, startTime, endTime, jian, jianKwh, jianSunKwh, jianAmount, feng, fengKwh, fengSunKwh, fengAmount, ping, pingKwh, pingSunKwh, pingAmount, gu, guKwh, guSunKwh, guAmount, meterStart, meterEnd, totalKwh, totalSunKwh, totalAmount, vin, tradeType, getTradeTypeDesc(tradeType), tradeTime, stopReasonStr, cardNo);
+			versionLabel, tradeNo, deviceNo, gunNo, startTime, endTime, jian, jianKwh, jianSunKwh, jianAmount, feng, fengKwh, fengSunKwh, fengAmount, ping, pingKwh, pingSunKwh, pingAmount, gu, guKwh, guSunKwh, guAmount, meterStart, meterEnd, totalKwh, totalSunKwh, totalAmount, vin, tradeType, getTradeTypeDesc(tradeType), tradeTime, stopReasonStr, cardNo);
 
 		// todo upload
 

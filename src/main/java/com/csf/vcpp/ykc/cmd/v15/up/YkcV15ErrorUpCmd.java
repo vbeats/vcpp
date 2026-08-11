@@ -26,9 +26,9 @@ public class YkcV15ErrorUpCmd extends YkcCmdExecutor { // 错误报文
 		body.readBytes(tradeNoBytes);
 		String tradeNo = BcdUtil.toString(tradeNoBytes);  // 交易流水号
 
-		byte[] deviceIdBytes = new byte[7];
-		body.readBytes(deviceIdBytes);
-		Long deviceId = BcdUtil.bcdBytesToLong(deviceIdBytes);  // 桩号
+		byte[] deviceNoBytes = new byte[7];
+		body.readBytes(deviceNoBytes);
+		String deviceNo = BcdUtil.bcdBytesToHex(deviceNoBytes);  // 桩号
 
 		byte gunNo = body.readByte();// 枪号
 
@@ -124,7 +124,7 @@ public class YkcV15ErrorUpCmd extends YkcCmdExecutor { // 错误报文
 				接收BMS 充电统计报文超时: {}[{}]
 				---------------------------------
 				""",
-			versionLabel, tradeNo, deviceId, gunNo, spn256000, getDesc(spn256000), spn2560AA, getDesc(spn2560AA), timeSync, getDesc(timeSync), chargePrepare, getDesc(chargePrepare), chargeStatus, getDesc(chargeStatus), stopCharge, getDesc(stopCharge), chargeStatistics, getDesc(chargeStatistics), bmsVin, getDesc(bmsVin), batteryChargeParams, getDesc(batteryChargeParams), bmsChargePrepare, getDesc(bmsChargePrepare), batteryChargeStatus, getDesc(batteryChargeStatus), batteryChargeRequirements, getDesc(batteryChargeRequirements), bmsStopCharge, getDesc(bmsStopCharge), bmsChargeStatistics, getDesc(bmsChargeStatistics));
+			versionLabel, tradeNo, deviceNo, gunNo, spn256000, getDesc(spn256000), spn2560AA, getDesc(spn2560AA), timeSync, getDesc(timeSync), chargePrepare, getDesc(chargePrepare), chargeStatus, getDesc(chargeStatus), stopCharge, getDesc(stopCharge), chargeStatistics, getDesc(chargeStatistics), bmsVin, getDesc(bmsVin), batteryChargeParams, getDesc(batteryChargeParams), bmsChargePrepare, getDesc(bmsChargePrepare), batteryChargeStatus, getDesc(batteryChargeStatus), batteryChargeRequirements, getDesc(batteryChargeRequirements), bmsStopCharge, getDesc(bmsStopCharge), bmsChargeStatistics, getDesc(bmsChargeStatistics));
 	}
 
 	private String getDesc(byte status) {

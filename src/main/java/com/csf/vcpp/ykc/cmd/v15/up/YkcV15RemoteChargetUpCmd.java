@@ -27,9 +27,9 @@ public class YkcV15RemoteChargetUpCmd extends YkcCmdExecutor { // 远程启机�
 		body.readBytes(tradeNoBytes);
 		String tradeNo = BcdUtil.toString(tradeNoBytes);  // 交易流水号
 
-		byte[] deviceIdBytes = new byte[7];
-		body.readBytes(deviceIdBytes);
-		Long deviceId = BcdUtil.bcdBytesToLong(deviceIdBytes);  // 桩号
+		byte[] deviceNoBytes = new byte[7];
+		body.readBytes(deviceNoBytes);
+		String deviceNo = BcdUtil.bcdBytesToHex(deviceNoBytes);  // 桩号
 
 		byte gunNo = body.readByte();// 枪号
 
@@ -54,7 +54,7 @@ public class YkcV15RemoteChargetUpCmd extends YkcCmdExecutor { // 远程启机�
 
 
 		log.info("【云快充】{} ⬆️ 远程启动充电命令回复 - 交易流水号: {} 桩号: {} 枪号: {} 启动结果: {}[{}] errCode: {}[{}]",
-			versionLabel, tradeNo, deviceId, gunNo, res, getResDesc(res), errCode, getErrCodeDesc(errCode));
+			versionLabel, tradeNo, deviceNo, gunNo, res, getResDesc(res), errCode, getErrCodeDesc(errCode));
 	}
 
 	private String getResDesc(byte res) {

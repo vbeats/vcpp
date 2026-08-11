@@ -25,11 +25,11 @@ public class YkcV15RemoteStopDownCmd extends YkcCmdExecutor { // 运营平台远
 	@Override
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
 		ByteBuf msgBody = Unpooled.buffer(8);
-		msgBody.writeBytes(data.getDeviceIdBytes());
+		msgBody.writeBytes(data.getDeviceNoBytes());
 
 		msgBody.writeByte(data.getGunNo()); // 枪号
 
-		log.info("【云快充】{} ⬇️ 运营平台远程停机 - 桩号: {} 枪号: {}", versionLabel, BcdUtil.bcdBytesToLong(data.getDeviceIdBytes()), data.getGunNo());
+		log.info("【云快充】{} ⬇️ 运营平台远程停机 - 桩号: {} 枪号: {}", versionLabel, BcdUtil.bcdBytesToHex(data.getDeviceNoBytes()), data.getGunNo());
 
 		ByteBuf res = YkcAckUtil.createAck(0, data.getEncryptFlag(), FrameType.REMOTE_STOP, msgBody);
 

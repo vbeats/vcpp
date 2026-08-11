@@ -23,9 +23,9 @@ public class YkcV15RemoteStopUpCmd extends YkcCmdExecutor { // 远程停机命�
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
 		ByteBuf body = data.getMsgBody();
 
-		byte[] deviceIdBytes = new byte[7];
-		body.readBytes(deviceIdBytes);
-		Long deviceId = BcdUtil.bcdBytesToLong(deviceIdBytes);  // 桩号
+		byte[] deviceNoBytes = new byte[7];
+		body.readBytes(deviceNoBytes);
+		String deviceNo = BcdUtil.bcdBytesToHex(deviceNoBytes);  // 桩号
 
 		byte gunNo = body.readByte(); // 枪号
 
@@ -39,7 +39,7 @@ public class YkcV15RemoteStopUpCmd extends YkcCmdExecutor { // 远程停机命�
 		 */
 		byte errCode = body.readByte();
 
-		log.info("【云快充】{} ⬆️ 远程停机命令回复 - 桩号: {} 枪号: {} 停止结果: {}[{}] errCode: {}[{}]", versionLabel, deviceId, gunNo, res, getResDesc(res), errCode, getErrCodeDesc(errCode));
+		log.info("【云快充】{} ⬆️ 远程停机命令回复 - 桩号: {} 枪号: {} 停止结果: {}[{}] errCode: {}[{}]", versionLabel, deviceNo, gunNo, res, getResDesc(res), errCode, getErrCodeDesc(errCode));
 	}
 
 	private String getResDesc(byte res) {

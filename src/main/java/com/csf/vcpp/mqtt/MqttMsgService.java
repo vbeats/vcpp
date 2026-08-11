@@ -30,8 +30,8 @@ public class MqttMsgService {
 
 	private void handleYkcCmd(CmdMsg cmdMsg) {
 
-		Long deviceId = cmdMsg.getDeviceId();
-		Channel channel = YkcServerContext.DEVICE_CHANNEL_MAP.get(deviceId);
+		String deviceNo = cmdMsg.getDeviceNo();
+		Channel channel = YkcServerContext.DEVICE_CHANNEL_MAP.get(deviceNo);
 		if (ObjectUtils.isEmpty(channel)) {
 			return;
 		}

@@ -22,13 +22,13 @@ public class YkcV15BillingModelSettingUpCmd extends YkcCmdExecutor { // 计费�
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
 		ByteBuf body = data.getMsgBody();
 
-		byte[] deviceIdBytes = new byte[7];
-		body.readBytes(deviceIdBytes);
-		Long deviceId = BcdUtil.bcdBytesToLong(deviceIdBytes);  // 桩号
+		byte[] deviceNoBytes = new byte[7];
+		body.readBytes(deviceNoBytes);
+		String deviceNo = BcdUtil.bcdBytesToHex(deviceNoBytes);  // 桩号
 
 		byte res = body.readByte(); // 0x00 失败 0x01 成功
 
-		log.info("【云快充】{} ⬆️ 计费模型设置应答: 桩号 {} 设置结果: {}[{}]", versionLabel, deviceId, res, getResDesc(res));
+		log.info("【云快充】{} ⬆️ 计费模型设置应答: 桩号 {} 设置结果: {}[{}]", versionLabel, deviceNo, res, getResDesc(res));
 	}
 
 	private String getResDesc(byte res) {

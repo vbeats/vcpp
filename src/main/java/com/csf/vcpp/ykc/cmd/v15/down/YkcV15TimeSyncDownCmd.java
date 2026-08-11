@@ -28,12 +28,12 @@ public class YkcV15TimeSyncDownCmd extends YkcCmdExecutor {  // 对时设置
 	@Override
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
 		ByteBuf msgBody = Unpooled.buffer(14);
-		msgBody.writeBytes(data.getDeviceIdBytes());
+		msgBody.writeBytes(data.getDeviceNoBytes());
 
 		LocalDateTime now = LocalDateTime.now();
 		msgBody.writeBytes(CP56Time2aUtil.encode(now)); // 当前时间
 
-		log.info("【云快充】{} ⬇️ 对时设置: 桩号 {}, 时间: {}", versionLabel, BcdUtil.bcdBytesToLong(data.getDeviceIdBytes()), now);
+		log.info("【云快充】{} ⬇️ 对时设置: 桩号 {}, 时间: {}", versionLabel, BcdUtil.bcdBytesToHex(data.getDeviceNoBytes()), now);
 
 		ByteBuf res = YkcAckUtil.createAck(0, data.getEncryptFlag(), FrameType.TIME_SYNC, msgBody);
 

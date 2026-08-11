@@ -29,9 +29,9 @@ public class YkcV15ParamConfigUpCmd extends YkcCmdExecutor { // 参数配置
 		body.readBytes(tradeNoBytes);
 		String tradeNo = BcdUtil.toString(tradeNoBytes);  // 交易流水号
 
-		byte[] deviceIdBytes = new byte[7];
-		body.readBytes(deviceIdBytes);
-		Long deviceId = BcdUtil.bcdBytesToLong(deviceIdBytes);  // 桩号
+		byte[] deviceNoBytes = new byte[7];
+		body.readBytes(deviceNoBytes);
+		String deviceNo = BcdUtil.bcdBytesToHex(deviceNoBytes);  // 桩号
 
 		byte gunNo = body.readByte();// 枪号
 
@@ -85,6 +85,6 @@ public class YkcV15ParamConfigUpCmd extends YkcCmdExecutor { // 参数配置
 				电桩最小输出电流: {}A
 				---------------------------------
 				""",
-			versionLabel, tradeNo, deviceId, gunNo, batteryMaxVol, batteryMaxCurrent, batteryTotalKwh, maxVol, maxTemp, soc, vol, maxOutVol, minOutVol, maxOutCurrent, minOutCurrent);
+			versionLabel, tradeNo, deviceNo, gunNo, batteryMaxVol, batteryMaxCurrent, batteryTotalKwh, maxVol, maxTemp, soc, vol, maxOutVol, minOutVol, maxOutCurrent, minOutCurrent);
 	}
 }

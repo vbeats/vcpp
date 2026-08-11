@@ -24,7 +24,7 @@ public class YkcV15BillingModelVerifyDownCmd extends YkcCmdExecutor {
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
 		// 应答
 		ByteBuf msgBody = Unpooled.buffer(10);
-		msgBody.writeBytes(data.getDeviceIdBytes());
+		msgBody.writeBytes(data.getDeviceNoBytes());
 		msgBody.writeShort(data.getBillingModelNo());
 
 		//  一律应答 不一致  让桩侧重新获取最新的 计费模型

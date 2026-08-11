@@ -14,8 +14,8 @@ public class YkcServerContext {
 
 	// ----------------- 充电桩登录成功后 放入 -----------------
 	// 桩号 === Channel
-	public static final Map<Long, Channel> DEVICE_CHANNEL_MAP = new ConcurrentHashMap<>(100000);
+	public static final Map<String, Channel> DEVICE_CHANNEL_MAP = new ConcurrentHashMap<>(100000);
 
 	// Channel id === 桩号
-	public static final Map<String, Long> CHANNEL_DEVICE_MAP = new ConcurrentHashMap<>(100000);
+	public static final Map<String, String> CHANNEL_DEVICE_MAP = new ConcurrentHashMap<>(100000);
 }

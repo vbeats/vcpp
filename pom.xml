@@ -27,6 +27,7 @@
         <commons.codec.version>1.22.0</commons.codec.version>
         <guava.version>33.6.0-jre</guava.version>
         <paho.version>1.2.5</paho.version>
+        <forest.version>1.8.1</forest.version>
     </properties>
 
     <dependencies>
@@ -85,6 +86,12 @@
             <groupId>org.eclipse.paho</groupId>
             <artifactId>org.eclipse.paho.mqttv5.client</artifactId>
             <version>${paho.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.dtflys.forest</groupId>
+            <artifactId>forest-spring-boot-starter</artifactId>
+            <version>${forest.version}</version>
         </dependency>
     </dependencies>
 

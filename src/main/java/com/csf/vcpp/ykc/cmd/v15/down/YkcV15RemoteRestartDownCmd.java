@@ -26,15 +26,15 @@ public class YkcV15RemoteRestartDownCmd extends YkcCmdExecutor { // 远程重启
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
 		ByteBuf msgBody = Unpooled.buffer(8);
 
-		long deviceId = BcdUtil.bcdBytesToLong(data.getDeviceIdBytes());
+		String deviceNo = BcdUtil.bcdBytesToHex(data.getDeviceNoBytes());
 
-		msgBody.writeBytes(data.getDeviceIdBytes());
+		msgBody.writeBytes(data.getDeviceNoBytes());
 
 		// 0x01：立即执行
 		//0x02：空闲执行
 		msgBody.writeByte(0x01);
 
-		log.info("【云快充】{} ⬇️ 远程重启 - 桩号: {} ", versionLabel, deviceId);
+		log.info("【云快充】{} ⬇️ 远程重启 - 桩号: {} ", versionLabel, deviceNo);
 
 		ByteBuf res = YkcAckUtil.createAck(0, data.getEncryptFlag(), FrameType.REMOTE_RESTART, msgBody);
 
@@ -47,7 +47,7 @@ public class YkcV15RemoteRestartDownCmd extends YkcCmdExecutor { // 远程重启
 	public YkcMsgData covertCmdData2YkcMsgData(CmdMsg cmdMsg) {
 		YkcMsgData data = new YkcMsgData();
 		data.setEncryptFlag(cmdMsg.getEncryptFlag());
-		data.setDeviceIdBytes(BcdUtil.longToBcdBytes(cmdMsg.getDeviceId()));
+		data.setDeviceNoBytes(BcdUtil.numStrToBcdBytes(cmdMsg.getDeviceNo()));
 
 		return data;
 	}

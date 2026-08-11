@@ -25,7 +25,7 @@ public class YkcV15HeartBeatDownCmd extends YkcCmdExecutor { // 心跳应答
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
 		// 心跳应答
 		ByteBuf msgBody = Unpooled.buffer(9);
-		msgBody.writeBytes(data.getDeviceIdBytes());
+		msgBody.writeBytes(data.getDeviceNoBytes());
 		msgBody.writeByte(data.getGunNo());
 		msgBody.writeByte(0);  // 固定 0
 

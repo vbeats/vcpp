@@ -26,10 +26,10 @@ public class YkcV15RemoteChargeDownCmd extends YkcCmdExecutor { // 运营平台�
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {
 		ByteBuf msgBody = Unpooled.buffer(44);
 
-		long deviceId = BcdUtil.bcdBytesToLong(data.getDeviceIdBytes());
+		String deviceNo = BcdUtil.bcdBytesToHex(data.getDeviceNoBytes());
 
 		msgBody.writeBytes(BcdUtil.numStrToBcdBytes(data.getTradeNo()));
-		msgBody.writeBytes(data.getDeviceIdBytes());
+		msgBody.writeBytes(data.getDeviceNoBytes());
 
 		msgBody.writeByte(data.getGunNo()); // 枪号
 
@@ -42,7 +42,7 @@ public class YkcV15RemoteChargeDownCmd extends YkcCmdExecutor { // 运营平台�
 		// 账户余额
 		msgBody.writeInt(0);
 
-		log.info("【云快充】{} ⬇️ 运营平台远程控制启机 - 交易流水号: {} 桩号: {} 枪号: {} ", versionLabel, data.getTradeNo(), deviceId, data.getGunNo());
+		log.info("【云快充】{} ⬇️ 运营平台远程控制启机 - 交易流水号: {} 桩号: {} 枪号: {} ", versionLabel, data.getTradeNo(), deviceNo, data.getGunNo());
 
 		ByteBuf res = YkcAckUtil.createAck(0, data.getEncryptFlag(), FrameType.REMOTE_CHARGE, msgBody);
 

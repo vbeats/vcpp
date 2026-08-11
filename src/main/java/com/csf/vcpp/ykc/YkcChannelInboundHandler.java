@@ -8,6 +8,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 
 import java.net.SocketException;
 import java.util.concurrent.ExecutorService;
@@ -36,8 +37,8 @@ public class YkcChannelInboundHandler extends SimpleChannelInboundHandler<String
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 		if (evt instanceof IdleStateEvent event) {
 			if (IdleState.READER_IDLE.equals(event.state())) {
-				Long deviceNo = removeChannel(ctx);
-				if (deviceNo != null) {
+				String deviceNo = removeChannel(ctx);
+				if (StringUtils.hasText(deviceNo)) {
 					log.warn("【云快充】 充电桩离线: {} | 当前充电桩连接数: {}", deviceNo, YkcServerContext.DEVICE_CHANNEL_MAP.size());
 				}
 				ctx.close();
@@ -58,8 +59,8 @@ public class YkcChannelInboundHandler extends SimpleChannelInboundHandler<String
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		log.error("【云快充】 数据处理异常:", cause);
 		if (cause instanceof SocketException) {
-			Long deviceNo = removeChannel(ctx);
-			if (deviceNo != null) {
+			String deviceNo = removeChannel(ctx);
+			if (StringUtils.hasText(deviceNo)) {
 				log.info("【云快充】 充电桩设备侧client断开连接: {}", deviceNo);
 			}
 			ctx.close();
@@ -71,8 +72,8 @@ public class YkcChannelInboundHandler extends SimpleChannelInboundHandler<String
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		log.info("【云快充】 充电桩设备侧client断开连接......: {}", ctx.channel().remoteAddress());
-		Long deviceNo = removeChannel(ctx);
-		if (deviceNo != null) {
+		String deviceNo = removeChannel(ctx);
+		if (StringUtils.hasText(deviceNo)) {
 			log.warn("【云快充】 充电桩设备侧client: {} 断开连接... | 当前充电桩连接数: {}", deviceNo, YkcServerContext.DEVICE_CHANNEL_MAP.size());
 		}
 		super.channelInactive(ctx);
@@ -81,10 +82,10 @@ public class YkcChannelInboundHandler extends SimpleChannelInboundHandler<String
 	/**
 	 * 清理通道映射关系，返回对应的桩号（若存在）
 	 */
-	private Long removeChannel(ChannelHandlerContext ctx) {
+	private String removeChannel(ChannelHandlerContext ctx) {
 		String channelId = ctx.channel().id().asLongText();
-		Long deviceNo = YkcServerContext.CHANNEL_DEVICE_MAP.remove(channelId);
-		if (deviceNo != null) {
+		String deviceNo = YkcServerContext.CHANNEL_DEVICE_MAP.remove(channelId);
+		if (StringUtils.hasText(deviceNo)) {
 			YkcServerContext.DEVICE_CHANNEL_MAP.remove(deviceNo, ctx.channel());
 		}
 		return deviceNo;
