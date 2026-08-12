@@ -4,13 +4,16 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Getter
 @Setter
 @ToString
-public class BillingSection implements Serializable { // 计费区间段
+public class BillingSection implements Serializable {
+	@Serial
+	private static final long serialVersionUID = -404177995612984092L; // 计费区间段
 
 	private BigDecimal ep; // 电价费率
 

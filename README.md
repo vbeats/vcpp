@@ -24,6 +24,14 @@ tcp 服务端口:
 
 云快充: 14位长整数
 
+## 价格模型
+
+```
+BillingSection : 有序集合 (尖峰平谷 或 自由定价 顺序)
+
+BillingModel: 48时段对应电价, 起止时间 + BillingSection集合对应索引
+```
+
 ## 平台端消息通信 MQTT
 
 - 平台⬇️指令 topic: vcpp/cmd
