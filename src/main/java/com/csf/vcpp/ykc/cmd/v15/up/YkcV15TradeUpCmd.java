@@ -1,5 +1,6 @@
 package com.csf.vcpp.ykc.cmd.v15.up;
 
+import cn.hutool.core.util.HexUtil;
 import com.csf.vcpp.annotation.ProtocolCmd;
 import com.csf.vcpp.utils.BcdUtil;
 import com.csf.vcpp.utils.BinUtil;
@@ -112,7 +113,10 @@ public class YkcV15TradeUpCmd extends YkcCmdExecutor { // 交易记录
 		// vin  VIN码，此处VIN码和充电时VIN码不同，正序直接上传，无需补0和反序
 		byte[] vinBytes = new byte[17];
 		body.readBytes(vinBytes);
-		String vin = new String(vinBytes, StandardCharsets.US_ASCII).replaceAll("\\u0000+$", "");
+		String vin = "";
+		if (!"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF".equalsIgnoreCase(HexUtil.encodeHexStr(vinBytes))) {
+			vin = new String(vinBytes, StandardCharsets.US_ASCII).replaceAll("\\u0000+$", "");
+		}
 
 		// 交易标识
 		/**

@@ -86,7 +86,10 @@ public class YkcV15HandShakeUpCmd extends YkcCmdExecutor { // 充电握手
 		// BMS 车辆识别码 vin
 		byte[] vinBytes = new byte[17];
 		body.readBytes(vinBytes);
-		String vin = new String(vinBytes, StandardCharsets.US_ASCII).replaceAll("\\u0000+$", "");
+		String vin = "";
+		if (!"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF".equalsIgnoreCase(HexUtil.encodeHexStr(vinBytes))) {
+			vin = new String(vinBytes, StandardCharsets.US_ASCII).replaceAll("\\u0000+$", "");
+		}
 
 		// BMS 软件版本号
 		byte[] bmsSoftVersionBytes = new byte[8];
