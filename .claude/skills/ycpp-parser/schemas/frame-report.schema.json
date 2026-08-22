@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema_version", "protocol", "version", "raw_hex", "envelope", "frame", "fields", "crc", "warnings", "errors"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "protocol": {"type": "string"},
+    "version": {"type": "string"},
+    "raw_hex": {"type": "string"},
+    "envelope": {"type": "object"},
+    "frame": {"type": "object"},
+    "fields": {"type": "array"},
+    "unknown_body_hex": {"type": "string"},
+    "crc": {"type": "object", "required": ["algorithm", "transmitted_hex", "computed_hex", "match"]},
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "errors": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

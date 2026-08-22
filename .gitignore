@@ -27,4 +27,4 @@ Thumbs.db
 /target
 
 # ai
-.claude
+.claude/settings.local.json
