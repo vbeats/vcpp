@@ -79,6 +79,15 @@ def _login_v18(body: bytes, frame_type: int):
     return "登录请求", "桩 -> 平台", fields, cursor.offset, cursor.warnings
 
 
+def _coordinate_decode(raw: bytes, offset: int) -> float | None:
+    encoded = int.from_bytes(raw, "little")
+    return None if encoded == 0 else round(encoded / 1000000 - offset, 6)
+
+
+def _coordinate_encode(value: Any, offset: int) -> bytes:
+    return bytes(4) if value in (None, "") else encode_uint_le(float(value) + offset, 4, 1000000)
+
+
 def _login_v21(body: bytes, frame_type: int):
     name, direction, fields, consumed, warnings = _login_v18(body, frame_type)
     cursor = Cursor(body[consumed:])
@@ -86,8 +95,8 @@ def _login_v21(body: bytes, frame_type: int):
         _field(cursor, "phone", "手机号码", 11, ascii_decode, "ascii"),
         _field(cursor, "supported_network", "支持网络制式", 1, lambda x: _byte(x[0]), "uint8"),
         _field(cursor, "current_network", "当前网络制式", 1, lambda x: _byte(x[0]), "uint8"),
-        _field(cursor, "longitude", "经度", 4, lambda x: uint_le(x, 1000000), "uint32-le/1e6"),
-        _field(cursor, "latitude", "纬度", 4, lambda x: uint_le(x, 1000000), "uint32-le/1e6"),
+        _field(cursor, "longitude", "经度", 4, lambda x: _coordinate_decode(x, 180), "uint32-le/1e6-180"),
+        _field(cursor, "latitude", "纬度", 4, lambda x: _coordinate_decode(x, 90), "uint32-le/1e6-90"),
     ]
     for field in extension_fields:
         field["offset"] += consumed
@@ -202,6 +211,57 @@ def _shunfeng_0c(body: bytes, frame_type: int):
     return "计费模型", "平台 -> 桩", fields, cursor.offset, cursor.warnings
 
 
+def _shunfeng_81(body: bytes, frame_type: int):
+    cursor = Cursor(body)
+    fields = [
+        _field(cursor, "trade_no", "交易流水号", 16, bcd_decode, "bcd"),
+        _field(cursor, "device_no", "桩编号", 7, bcd_decode, "bcd"),
+        _field(cursor, "gun_no", "枪号", 1, bcd_decode, "bcd"),
+        _field(cursor, "start_time", "开始时间", 7, cp56_decode, "cp56time2a"),
+        _field(cursor, "end_time", "结束时间", 7, cp56_decode, "cp56time2a"),
+        _field(cursor, "start_soc", "开始SOC", 1, lambda x: _byte(x[0]), "uint8"),
+        _field(cursor, "end_soc", "结束SOC", 1, lambda x: _byte(x[0]), "uint8"),
+        _field(cursor, "meter_start", "电表总起值", 5, lambda x: uint_le(x, 10000), "uint40-le/10000"),
+        _field(cursor, "meter_end", "电表总止值", 5, lambda x: uint_le(x, 10000), "uint40-le/10000"),
+        _field(cursor, "total_energy", "总电量", 4, lambda x: uint_le(x, 10000), "uint32-le/10000"),
+        _field(cursor, "loss_energy", "计损总电量", 4, lambda x: uint_le(x, 10000), "uint32-le/10000"),
+        _field(cursor, "amount", "消费金额", 4, lambda x: uint_le(x, 10000), "uint32-le/10000"),
+        _field(cursor, "vin", "VIN", 17, ascii_decode, "ascii"),
+        _field(cursor, "trade_flag", "交易标识", 1, lambda x: _byte(x[0]), "uint8"),
+        _field(cursor, "trade_time", "交易时间", 7, cp56_decode, "cp56time2a"),
+        _field(cursor, "stop_reason", "停止原因", 1, lambda x: _byte(x[0]), "uint8"),
+        _field(cursor, "physical_card", "物理卡号", 8, lambda x: int.from_bytes(x, "little"), "uint64-le"),
+    ]
+    for index in range(48):
+        fields.append(_field(cursor, f"period_energy_{index + 1}", f"第{index + 1}时段电量", 3,
+                             lambda x: uint_le(x, 10000), "uint24-le/10000"))
+    return "交易结算记录", "桩 -> 平台", fields, cursor.offset, cursor.warnings
+
+
+def _encode_shunfeng_81(values: dict) -> bytes:
+    data = b"".join([
+        bcd_encode(_field_value(values, "trade_no", "0"), 16),
+        bcd_encode(_field_value(values, "device_no", "0"), 7),
+        bcd_encode(_field_value(values, "gun_no", "1"), 1),
+        cp56_encode(_field_value(values, "start_time")),
+        cp56_encode(_field_value(values, "end_time")),
+        bytes((_byte(_field_value(values, "start_soc", 0)), _byte(_field_value(values, "end_soc", 0)))),
+        encode_uint_le(_field_value(values, "meter_start", 0), 5, 10000),
+        encode_uint_le(_field_value(values, "meter_end", 0), 5, 10000),
+        encode_uint_le(_field_value(values, "total_energy", 0), 4, 10000),
+        encode_uint_le(_field_value(values, "loss_energy", 0), 4, 10000),
+        encode_uint_le(_field_value(values, "amount", 0), 4, 10000),
+        ascii_encode(_field_value(values, "vin", ""), 17),
+        bytes((_byte(_field_value(values, "trade_flag", 1)),)),
+        cp56_encode(_field_value(values, "trade_time")),
+        bytes((_byte(_field_value(values, "stop_reason", 0)),)),
+        encode_uint_le(_field_value(values, "physical_card", 0), 8),
+    ])
+    for index in range(48):
+        data += encode_uint_le(_field_value(values, f"period_energy_{index + 1}", 0), 3, 10000)
+    return data
+
+
 def _field_value(fields: dict, key: str, default: Any = None) -> Any:
     return fields.get(key, default)
 
@@ -234,8 +294,8 @@ def _encode_login_v18(values: dict, include_v21: bool = False) -> bytes:
     if include_v21:
         data += ascii_encode(_field_value(values, "phone", ""), 11)
         data += bytes((_byte(_field_value(values, "supported_network", 0)), _byte(_field_value(values, "current_network", 0))))
-        data += encode_uint_le(_field_value(values, "longitude", 0), 4, 1000000)
-        data += encode_uint_le(_field_value(values, "latitude", 0), 4, 1000000)
+        data += _coordinate_encode(_field_value(values, "longitude"), 180)
+        data += _coordinate_encode(_field_value(values, "latitude"), 90)
     return data
 
 
@@ -451,13 +511,29 @@ def _register() -> None:
     register_definition(ProtocolDefinition("ykc", "V2.1", {0x01: "登录请求", 0x3D: "交易记录", **billing_names},
                                            v21_decoders, v21_encoders,
                                            {0x01: "桩 -> 平台", 0x3D: "桩 -> 平台", **billing_directions}))
-    register_definition(ProtocolDefinition("shunfeng", "V1.5", {0x0B: "计费模型请求", 0x0C: "计费模型"},
-                                           {0x0B: _shunfeng_0b, 0x0C: _shunfeng_0c},
-                                           {0x0B: _encode_shunfeng_0b, 0x0C: _encode_shunfeng_0c},
-                                           {0x0B: "桩 -> 平台", 0x0C: "平台 -> 桩"}))
+    register_definition(ProtocolDefinition("shunfeng", "V1.5",
+                                           {0x0B: "计费模型请求", 0x0C: "计费模型", 0x81: "交易结算记录"},
+                                           {0x0B: _shunfeng_0b, 0x0C: _shunfeng_0c, 0x81: _shunfeng_81},
+                                           {0x0B: _encode_shunfeng_0b, 0x0C: _encode_shunfeng_0c, 0x81: _encode_shunfeng_81},
+                                           {0x0B: "桩 -> 平台", 0x0C: "平台 -> 桩", 0x81: "桩 -> 平台"}))
 
 
 _register()
+
+from . import protocol_catalog  # noqa: E402,F401 - extends the built-in registry after base codecs are registered
+
+
+def _raw_body(values: dict) -> bytes | None:
+    for key in ("raw_body_hex", "body_hex"):
+        if key not in values:
+            continue
+        text = str(values[key]).strip().replace(" ", "").replace("_", "")
+        if text.lower().startswith("0x"):
+            text = text[2:]
+        if len(text) % 2 or any(char not in "0123456789abcdefABCDEF" for char in text):
+            raise ValueError(f"{key} 必须是偶数位十六进制字符串")
+        return bytes.fromhex(text)
+    return None
 
 
 def decode_body(protocol: str, version: str, body: bytes, frame_type: int):
@@ -472,20 +548,53 @@ def decode_body(protocol: str, version: str, body: bytes, frame_type: int):
 def encode_body(protocol: str, version: str, frame_type: int, values: dict) -> bytes:
     from .registry import get_definition
     definition = get_definition(protocol, version)
+    if frame_type not in definition.frame_names:
+        raise ValueError(f"协议未定义帧类型：{protocol}/{version}/0x{frame_type:02X}")
+    raw = _raw_body(values)
+    if raw is not None:
+        return raw
     encoder = definition.encoders.get(frame_type)
-    if encoder is None:
-        raise ValueError(f"未注册生成器：{protocol}/{version}/0x{frame_type:02X}")
-    return encoder(values)
+    if encoder is not None:
+        return encoder(values)
+    raise ValueError(f"帧类型 0x{frame_type:02X} 的字段结构存在歧义，请通过 raw_body_hex 提供消息体")
 
 
 def frame_type_for(protocol: str, version: str, request: str | None, explicit: Any = None) -> int:
+    from .registry import get_definition
+    definition = get_definition(protocol, version)
     if explicit is not None:
         text = str(explicit).strip().lower()
         return int(text, 16) if text.startswith("0x") else int(text)
     text = (request or "").lower().replace(" ", "")
-    if "登录" in text:
-        return 0x01
-    if "交易" in text or "账单" in text:
+    for frame_type in definition.frame_names:
+        if f"0x{frame_type:02x}" in text:
+            return frame_type
+    for frame_type, name in sorted(definition.frame_names.items(), key=lambda item: len(item[1]), reverse=True):
+        normalized = name.lower().replace(" ", "")
+        if normalized and normalized in text:
+            return frame_type
+    aliases = (
+        ("登录应答", 0x02), ("登录", 0x01), ("心跳应答", 0x04), ("心跳", 0x03),
+        ("验证应答", 0x06), ("验证请求", 0x05), ("读取实时", 0x12), ("实时数据", 0x13),
+        ("主动启充", 0xA5 if version in ("V1.8.1", "V2.1") else 0x31),
+        ("启充确认", 0xA6 if version in ("V1.8.1", "V2.1") else 0x32),
+        ("远程启机回复", 0xA7 if version in ("V1.8.1", "V2.1") else 0x33),
+        ("远程启机", 0xA8 if version in ("V1.8.1", "V2.1") else 0x34),
+        ("远程停机回复", 0x35), ("远程停机", 0x36), ("交易确认", 0x40),
+        ("对时应答", 0x55), ("对时", 0x56), ("计费设置应答", 0x57), ("计费设置", 0x58),
+        ("重启应答", 0x91), ("重启", 0x92), ("更新应答", 0x93), ("更新", 0x94),
+        ("故障复位确认", 0x4A), ("故障复位", 0x4B), ("故障确认", 0x49), ("故障上送", 0x50),
+        ("二维码应答", 0x5A if version == "V2.1" else 0x9B),
+        ("二维码", 0x5B if version == "V2.1" else 0xF0 if version == "V1.5" else 0x9E),
+        ("密钥更新应答", 0x95), ("密钥更新", 0x96), ("日志召唤应答", 0x97), ("日志召唤", 0x98),
+        ("vin上报回复", 0xAA), ("vin上报", 0xA9),
+    )
+    for phrase, frame_type in aliases:
+        if phrase in text and frame_type in definition.frame_names:
+            return frame_type
+    if "交易" in text or "账单" in text or "结算" in text:
+        if protocol == "shunfeng":
+            return 0x81
         return 0x3F if version == "V1.4" else 0x3B if version in ("V1.5", "V1.6") else 0x3D
     if protocol == "ykc" and ("计费模型" in text or "费率" in text):
         return 0x09 if "请求" in text and not any(word in text for word in ("应答", "下发", "模型内容")) else 0x0A

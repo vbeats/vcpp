@@ -28,6 +28,23 @@ class ShunfengTests(unittest.TestCase):
         self.assertEqual(result.unknown_body_hex, "")
         self.assertTrue(result.crc["match"])
 
+    def test_81_trade_settlement_has_48_periods(self):
+        body = encode_body("shunfeng", "V1.5", 0x81, {
+            "device_no": "55031412782305",
+            "gun_no": 1,
+            "start_soc": 20,
+            "end_soc": 80,
+            "period_energy_48": 1.2345,
+        })
+        self.assertEqual(len(body), 240)
+        result = parse_frame(encode_frame("shunfeng", "V1.5", 0x81, body, sequence=2), "shunfeng", "V1.5", decode_body)
+        values = {field["key"]: field["value"] for field in result.fields}
+        self.assertEqual(values["gun_no"], "01")
+        self.assertEqual(values["period_energy_48"], 1.2345)
+        self.assertEqual(result.length, 244)
+        self.assertTrue(result.crc["match"])
+        self.assertEqual(result.unknown_body_hex, "")
+
 
 if __name__ == "__main__":
     unittest.main()

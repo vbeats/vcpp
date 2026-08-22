@@ -30,6 +30,20 @@ class GeneratorTests(unittest.TestCase):
         self.assertEqual(result["frame"]["name"], "登录请求")
         self.assertEqual(result["fields"][0]["value"], "20260501000001")
 
+    def test_list_reports_all_v21_frames(self):
+        completed = self.run_cli("list", "--protocol", "ykc", "--version", "V2.1", "--format", "json")
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        result = json.loads(completed.stdout)
+        self.assertEqual(len(result["frames"]), 73)
+        self.assertTrue(all(item["generatable"] for item in result["frames"]))
+
+    def test_generate_new_frame_from_natural_language(self):
+        completed = self.run_cli("generate", "--request", "生成云快充2.1版本的设备故障复位上送", "--format", "json")
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        result = json.loads(completed.stdout)
+        self.assertEqual(result["envelope"]["frame_type"], "0x4B")
+        self.assertTrue(result["crc"]["match"])
+
     def test_missing_version_is_structured_error(self):
         completed = self.run_cli("parse", "--protocol", "ykc", "--hex", "68", "--format", "json")
         self.assertEqual(completed.returncode, 2)

@@ -28,3 +28,4 @@ Thumbs.db
 
 # ai
 .claude/settings.local.json
+.claude/scripts/__pycache__

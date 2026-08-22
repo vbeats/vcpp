@@ -133,6 +133,27 @@ def command_generate(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_list(args: argparse.Namespace) -> int:
+    protocol, version = _resolve_protocol_version(args.protocol, args.version, interactive=args.format != "json")
+    definition = get_definition(protocol, version)
+    frames = [
+        {
+            "frame_type": f"0x{frame_type:02X}",
+            "name": name,
+            "direction": definition.directions.get(frame_type, "未知"),
+            "generatable": frame_type in definition.encoders,
+        }
+        for frame_type, name in sorted(definition.frame_names.items())
+    ]
+    if args.format == "json":
+        print(json.dumps({"protocol": protocol, "version": version, "frames": frames}, ensure_ascii=False, indent=2))
+    else:
+        print(f"{protocol}/{version} 可生成帧：")
+        for item in frames:
+            print(f"{item['frame_type']}  {item['direction']}  {item['name']}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="云快充/瞬峰协议报文解析和模拟生成工具")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -150,6 +171,9 @@ def build_parser() -> argparse.ArgumentParser:
     generate_parser.add_argument("--encrypt-flag", default="0", help="加密标志，当前只生成明文")
     generate_parser.add_argument("--send-time", help="V2.1 CP56Time2a 时间，例如 2026-01-01 00:00:00")
     generate_parser.set_defaults(handler=command_generate)
+    list_parser = subparsers.add_parser("list", help="列出指定版本可生成的帧类型")
+    _add_common(list_parser)
+    list_parser.set_defaults(handler=command_list)
     return parser
 
 
