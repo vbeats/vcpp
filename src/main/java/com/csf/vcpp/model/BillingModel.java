@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-public class BillingModel implements Serializable { // 价格模型
+public class BillingModel implements Serializable { // 时段价格模型
 	@Serial
 	private static final long serialVersionUID = 4414841718712433798L;
 
