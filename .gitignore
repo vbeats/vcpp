@@ -27,5 +27,5 @@ Thumbs.db
 /target
 
 # ai
-.claude/settings.local.json
-.claude/scripts/__pycache__
+.claude/
+.codebuddy/

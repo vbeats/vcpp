@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "vcpp 充电桩边缘接入服务架构",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "viewBox": [1000, 560],
+    "repository": {
+      "url": "https://github.com/vbeats/vcpp",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "8ebf6936d14daf45521b715492f910bf5733139d"
+    },
+    "views": [
+      {
+        "id": "uplink",
+        "label": "设备上行链路",
+        "focus": ["pile", "tcp", "router", "executors", "ctx"],
+        "note": "桩侧报文经拆帧与 CRC 校验后，按帧类型路由到对应版本的指令执行器。"
+      },
+      {
+        "id": "downlink",
+        "label": "平台下行链路",
+        "focus": ["platform", "mqtt", "executors", "tcp", "pile"],
+        "note": "运营平台经 MQTT 下发指令，按桩号取到 Channel 后组应答帧写回设备。"
+      },
+      {
+        "id": "state",
+        "label": "连接状态与边界",
+        "focus": ["executors", "ctx", "mqtt"],
+        "note": "桩号与 Channel 的映射全部驻留在进程内内存表中。"
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "pile",
+      "type": "external",
+      "label": "充电桩设备",
+      "sublabel": "云快充 1.5 ~ 2.1",
+      "pos": [25, 340],
+      "size": [120, 60]
+    },
+    {
+      "id": "tcp",
+      "type": "backend",
+      "label": "Netty TCP 接入层",
+      "sublabel": "端口 9847-9851",
+      "tag": "ykc",
+      "pos": [175, 336],
+      "size": [130, 68],
+      "sources": [
+        { "path": "src/main/java/com/csf/vcpp/ykc/cmd/AbstractYkcServerBootstrap.java", "label": "服务启动与端口绑定" },
+        { "path": "src/main/java/com/csf/vcpp/ykc/YkcChannelHandler.java", "label": "pipeline 与拆帧" }
+      ]
+    },
+    {
+      "id": "router",
+      "type": "backend",
+      "label": "YkcUpDataRouter",
+      "sublabel": "拆帧 + CRC16",
+      "pos": [335, 340],
+      "size": [120, 60],
+      "sources": [
+        { "path": "src/main/java/com/csf/vcpp/ykc/router/YkcUpDataRouter.java", "label": "帧解析与路由" }
+      ]
+    },
+    {
+      "id": "executors",
+      "type": "backend",
+      "label": "指令执行器注册表",
+      "sublabel": "@ProtocolCmd 注册表",
+      "tag": "EXECUTER_MAP",
+      "pos": [485, 332],
+      "size": [150, 76],
+      "sources": [
+        { "path": "src/main/java/com/csf/vcpp/ykc/executor/YkcCmdExecutor.java", "label": "执行器基类" },
+        { "path": "src/main/java/com/csf/vcpp/annotation/ProtocolCmd.java", "label": "注册注解" }
+      ]
+    },
+    {
+      "id": "mqtt",
+      "type": "messagebus",
+      "label": "MQTT 网关",
+      "sublabel": "Paho v5",
+      "pos": [665, 340],
+      "size": [120, 60],
+      "sources": [
+        { "path": "src/main/java/com/csf/vcpp/mqtt/VcppMqttConfig.java", "label": "客户端与订阅" },
+        { "path": "src/main/java/com/csf/vcpp/mqtt/MqttMsgService.java", "label": "下行指令分发" }
+      ]
+    },
+    {
+      "id": "platform",
+      "type": "external",
+      "label": "运营平台",
+      "sublabel": "MQTT 指令下发",
+      "pos": [850, 340],
+      "size": [130, 60]
+    },
+    {
+      "id": "ctx",
+      "type": "database",
+      "label": "连接注册表",
+      "sublabel": "桩号 ↔ Channel",
+      "tag": "进程内存",
+      "pos": [485, 100],
+      "size": [150, 58],
+      "sources": [
+        { "path": "src/main/java/com/csf/vcpp/ykc/context/YkcServerContext.java", "label": "桩号与 Channel 映射" }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "vcpp 边缘服务进程 · Spring Boot 4 / JDK 21",
+      "wraps": ["tcp", "router", "executors", "mqtt", "ctx"],
+      "pad": 24
+    },
+    {
+      "kind": "region",
+      "label": "运营平台侧",
+      "wraps": ["platform"],
+      "pad": 18
+    }
+  ],
+  "connections": [
+    { "from": "pile", "to": "tcp", "label": "云快充 TCP 长连接", "variant": "emphasis", "labelDy": -58 },
+    { "from": "tcp", "to": "router", "label": "上行报文 · 虚拟线程派发", "labelDy": -58 },
+    { "from": "router", "to": "executors", "label": "版本 + 帧类型路由", "labelDy": -58 },
+    { "from": "executors", "to": "ctx", "label": "登录成功登记桩号" },
+    {
+      "from": "executors",
+      "to": "tcp",
+      "label": "应答帧下发",
+      "fromSide": "bottom",
+      "toSide": "bottom",
+      "via": [[560, 490], [240, 490]],
+      "labelSegment": 1,
+      "labelDy": -14
+    },
+    { "from": "platform", "to": "mqtt", "label": "MQTT v5 发布指令", "labelDy": -58 },
+    { "from": "mqtt", "to": "executors", "label": "vcpp/cmd 下行指令", "variant": "emphasis", "labelDy": -58 }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "协议接入",
+      "items": [
+        "每版本独占端口：1.5→9847 … 2.1→9851",
+        "帧结构 0x68 起始 + 长度 + 序列号 + 加密标志 + 帧类型 + CRC16",
+        "v2.1 起长度字段扩为 2 字节，新增 7 字节 CP56Time2a 时间"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "指令注册机制",
+      "items": [
+        "各版本 Bootstrap 扫描自身包，注册 @ProtocolCmd 指令执行器",
+        "键为「版本 + _ + 帧类型」，存于 EXECUTER_MAP",
+        "厂商差异在对应版本包内新建同类指令，不改其他版本"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "当前状态与边界",
+      "items": [
+        "上行数据目前仅日志输出，MQTT 上报尚未接入",
+        "登录校验为硬编码占位，待接 Forest ApiClient",
+        "桩号 ↔ Channel 为进程内内存映射；OCPP 仍在规划"
+      ]
+    }
+  ]
+}

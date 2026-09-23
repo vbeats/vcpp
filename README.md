@@ -5,6 +5,10 @@
 - [ ] 云快充 1.5 ~ 2.x
 - [ ] OCPP 1.6 ~ 2.x
 
+## 架构
+
+![alt](./doc/vcpp-architecture.visual-check.1440x900.light.png)
+
 ## 端口
 
 ```
@@ -39,7 +43,7 @@ BillingModel: 48时段对应电价, 起止时间 + BillingSection集合对应索
   > 下行指令: {protocol:ykc, versionLabel:V18, cmdType: CmdType, deviceNo:桩号, data: 业务数据}
 
 - 设备⬆️状态 / 一般数据 topic: vcpp/data/{充电桩号}
-- 设备⬆️登录 / 电价 ... 运营信息: vcpp/ops/{充电桩号}
+- 设备⬆️登录 / 电价 ... ack等信息: vcpp/ops/{充电桩号}
 - 设备⬆️订单 topic: vcpp/trade/{充电桩号}
 
 ## 兼容性处理
