@@ -160,6 +160,7 @@ Netty 读事件 (ByteBuf -> HEX 字符串)
 ### 3.6 计费模型（价格模型）
 
 - `BillingSection`：有序集合，尖峰平谷模式下顺序为 **尖(0) → 峰(1) → 平(2) → 谷(3)**，含电费率 `ep` / 服务费率 `sp`
+- 计费模型应答（0x0A/0x58）消息体目前固定 90 字节 = **4 段（尖峰平谷）**；深谷方案见 `云快充V1.5-增加深谷（云电）_方案.md`，5 段（尖/峰/平/谷/**深谷(4)**）对应 98 字节，服务端尚未实现（模拟器已支持两种模式，见下条待办）
 - `BillingModel`：48 个时段，每段 `start`/`end`（HH:mm）+ `sectionIndex` 指向 `BillingSection`
 - 下发/应答时费率按 `× 100000` 取整（`RoundingMode.DOWN`），电量/金额按 `× 0.0001` 还原，单价按 `× 0.00001` 还原
 - 计费模型编号固定 `0x0100`
@@ -220,6 +221,9 @@ public class YkcV15XxxUpCmd extends YkcCmdExecutor {
 - **OCPP**：目录与文档已备（`doc/OCPP.md`、`doc/T／CEC 102.x`），代码尚未开始；实现时应参照 `ykc/` 的分层（Bootstrap / Router / Executor / FrameType）在 `ocpp/` 下平行扩展，不要混入 `ykc` 包。
 - **连接上下文为全局静态 Map**（`YkcServerContext`），单实例部署；多实例需改为 Redis 等外部存储。
 - `VcppMqttConfig#mqttClient` 连接失败会 `System.exit(-1)`，排查启动即退出问题时优先看这里。
+- **交易记录 0x3D 未实现（模拟器联调阻塞项）**：V1.7 起交易记录帧由 0x3B 改为 0x3D，但 `YkcV15TradeUpCmd` / `YkcV15TradeDownCmd` 注解为 `protocols = {V15, V16}`。V17/V18/V21 桩上报 0x3D 时只会打印「帧类型未实现 cmd executor」且不回 0x40 确认（模拟器侧交易记录帧类型由版本决定，不可配置，见 `vcpp-emulator/AGENTS.md`）。
+- **序列号域字节序不一致**：上行解析用 `readUnsignedShortLE()`（小端），而 `YkcAckUtil#createAck` 用 Netty `writeShort()`（大端）写下行序列号。模拟器按上行小端 / 下行大端处理（硬编码在 `internal/protocol/ykc/codec.go` 的 `upSeqOrder` / `downSeqOrder`），服务端统一后需同步调整这两个常量。
+- **深谷（5 段）计费模型未实现**：服务端下发/解析只支持 4 段，模拟器已同时支持 4 段（90B）与 5 段（98B，按消息体长度识别，深谷段索引 4）。服务端要实现时，扩展 `BillingSection`/`BillingModel` 并按消息体长度区分即可。
 
 ---
 
@@ -230,3 +234,4 @@ public class YkcV15XxxUpCmd extends YkcCmdExecutor {
 - 国标参考：`doc/T／CEC 102.1—2016` ~ `102.4—2016` PDF
 - OCPP 规划：`doc/OCPP.md`
 - 项目概览与端口/主题速查：`README.md`
+- 配套充电桩模拟器（Go + go-zero，client 端）：`vcpp-emulator/AGENTS.md`、`vcpp-emulator/README.md`
