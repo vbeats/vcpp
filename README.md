@@ -1,55 +1,63 @@
-## vcpp
+# vcpp
 
-充电桩 边缘设备服务
+充电桩边缘设备服务（平台侧），接收充电桩 TCP 长连接并完成国产云快充协议的编解码。
+
+## 支持范围
 
 - [ ] 云快充 1.5 ~ 2.x
 - [ ] OCPP 1.6 ~ 2.x
 
 ## 架构
 
-![alt](./doc/vcpp-architecture.visual-check.1440x900.light.png)
+![vcpp 架构图](./doc/vcpp-architecture.visual-check.1440x900.light.png)
 
 ## 端口
 
-```
-web 服务端口：10086
+Web 服务端口：`10086`
 
-tcp 服务端口:
+TCP 服务端口（每个协议版本独立端口）：
 
-云快充: 1.4 - 淘汰
-云快充: 1.5 - 9847
-云快充: 1.6 - 9848
-云快充: 1.7 - 9849
-云快充: 1.8 - 9850
-云快充: 2.1 - 9851
-```
+| 协议版本 | 端口 | 说明 |
+| --- | --- | --- |
+| 云快充 1.4 | — | 已淘汰 |
+| 云快充 1.5 | 9847 | |
+| 云快充 1.6 | 9848 | |
+| 云快充 1.7 | 9849 | |
+| 云快充 1.8 | 9850 | |
+| 云快充 2.1 | 9851 | |
 
 ## 桩号
 
-云快充: 14位长整数
+云快充：14 位长整数。
 
 ## 价格模型
 
-```
-BillingSection : 有序集合 (尖峰平谷 或 自由定价 顺序)
-
-BillingModel: 48时段对应电价, 起止时间 + BillingSection集合对应索引
-```
+- `BillingSection`：有序集合（尖峰平谷 或 自由定价 顺序）
+- `BillingModel`：48 时段对应电价，起止时间 + `BillingSection` 集合对应索引
 
 ## 平台端消息通信 MQTT
 
-- 平台⬇️指令 topic: vcpp/cmd
+| 方向 | 用途 | Topic |
+| --- | --- | --- |
+| 平台 ⬇️ 设备 | 下行指令 | `vcpp/cmd` |
+| 设备 ⬆️ 平台 | 状态 / 一般数据 | `vcpp/data/{充电桩号}` |
+| 设备 ⬆️ 平台 | 登录 / 电价 ... ack 等信息 | `vcpp/ops/{充电桩号}` |
+| 设备 ⬆️ 平台 | 订单 | `vcpp/trade/{充电桩号}` |
 
-  > 下行指令: {protocol:ykc, versionLabel:V18, cmdType: CmdType, deviceNo:桩号, data: 业务数据}
+下行指令消息体（`vcpp/cmd`）：
 
-- 设备⬆️状态 / 一般数据 topic: vcpp/data/{充电桩号}
-- 设备⬆️登录 / 电价 ... ack等信息: vcpp/ops/{充电桩号}
-- 设备⬆️订单 topic: vcpp/trade/{充电桩号}
+| 字段 | 说明 | 示例 |
+| --- | --- | --- |
+| `protocol` | 协议标识 | `ykc` |
+| `versionLabel` | 协议版本 | `V18` |
+| `cmdType` | 指令类型 | `CmdType` |
+| `deviceNo` | 桩号 | `桩号` |
+| `data` | 业务数据 | `业务数据` |
 
 ## 兼容性处理
 
-> 不同厂商主板不一定严格按照标准协议实现 不兼容的地方额外定义 ProtocolCmd.protocols 单独处理
+> 不同厂商主板不一定严格按照标准协议实现，不兼容的地方额外定义 `ProtocolCmd.protocols` 单独处理。
 
-## 报文demo
+## 报文 demo
 
-[云快充](doc/云快充.md)
+[云快充](doc/云快充/)
