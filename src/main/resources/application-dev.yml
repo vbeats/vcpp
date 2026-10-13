@@ -1,7 +1,0 @@
-vcpp:
-  api: http://localhost
-  mqtt:
-    host: tcp://10.88.0.80:1883
-    client-id: vcpp-1
-    username: admin
-    password: admin123456

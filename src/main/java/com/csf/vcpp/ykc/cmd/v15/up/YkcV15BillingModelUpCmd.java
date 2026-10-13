@@ -37,8 +37,6 @@ public class YkcV15BillingModelUpCmd extends YkcCmdExecutor { // 计费模型请
 
 		// todo 获取 平台计费模型
 
-		//R<> priceRes = apiClient.getBillingModel(params);
-
 		data.setDeviceNoBytes(deviceNoBytes);
 		data.setBillingSections(JSON.parseArray("[\n" +
 			"            {\n" +

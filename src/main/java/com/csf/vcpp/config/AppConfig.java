@@ -11,8 +11,6 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "vcpp")
 public class AppConfig {
 
-	private String api;  // api接口地址
-
 	private Integer ykc15Port; // ykc1.5 监听端口
 	private Integer ykc16Port; // ykc1.6 监听端口
 	private Integer ykc17Port; // ykc1.7 监听端口
