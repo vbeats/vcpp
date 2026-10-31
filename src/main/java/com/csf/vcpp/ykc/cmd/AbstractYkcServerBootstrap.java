@@ -1,32 +1,43 @@
 package com.csf.vcpp.ykc.cmd;
 
 import cn.hutool.core.thread.ThreadUtil;
-import cn.hutool.core.util.ClassUtil;
-import cn.hutool.extra.spring.SpringUtil;
-import com.csf.vcpp.annotation.ProtocolCmd;
 import com.csf.vcpp.config.AppConfig;
 import com.csf.vcpp.ykc.YkcChannelHandler;
 import com.csf.vcpp.ykc.context.YkcServerContext;
-import com.csf.vcpp.ykc.enums.FrameType;
-import com.csf.vcpp.ykc.executor.YkcCmdExecutor;
 import com.csf.vcpp.ykc.router.YkcUpDataRouter;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.MultiThreadIoEventLoopGroup;
 import io.netty.channel.nio.NioIoHandler;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+/**
+ * 云快充 TCP 服务启动模板。
+ * <p>
+ * 指令注册统一由 {@link com.csf.vcpp.ykc.context.YkcCmdRegistry} 完成（不再按包扫描），
+ * 本类只负责端口监听与线程组生命周期；停机时先关闭本版本的全部连接，再释放线程组。
+ * </p>
+ */
 @Slf4j
 public abstract class AbstractYkcServerBootstrap implements InitializingBean, DisposableBean {
 
 	protected final AppConfig appConfig;
+
 	protected final YkcUpDataRouter ykcUpDataRouter;
 
-	private Channel channel;
+	private EventLoopGroup bossGroup;
+
+	private EventLoopGroup workerGroup;
+
+	private volatile Channel serverChannel;
 
 	protected AbstractYkcServerBootstrap(AppConfig appConfig, YkcUpDataRouter ykcUpDataRouter) {
 		this.appConfig = appConfig;
@@ -34,81 +45,89 @@ public abstract class AbstractYkcServerBootstrap implements InitializingBean, Di
 	}
 
 	@Override
-	public void destroy() throws Exception {
-		if (channel == null) {
-			return;
-		}
-
-		try {
-			channel.close().sync();
-		} catch (Exception e) {
-			log.error("【Server】 Close Failed : ", e);
-		}
+	public void afterPropertiesSet() {
+		ThreadUtil.execAsync(this::startServer);
 	}
 
 	@Override
-	public void afterPropertiesSet() throws Exception {
-		this.initCmdExecutor();
-		ThreadUtil.execAsync(() -> startServer(getPort()));
-	}
+	public void destroy() {
+		String versionLabel = getVersionLabel();
 
-	// 初始化 cmd executor 实例
-	private void initCmdExecutor() {
-		Set<Class<?>> cmdClasses = ClassUtil.scanPackageByAnnotation(ClassUtil.getPackage(this.getClass()), ProtocolCmd.class);
+		// 1. 先关闭该版本上的全部设备连接，保证桩侧能立刻感知并重连
+		YkcServerContext.closeByVersion(versionLabel);
 
-		cmdClasses.forEach(cmdClass -> {
-			ProtocolCmd annotation = cmdClass.getAnnotation(ProtocolCmd.class);
-
-			FrameType frameType = annotation.value();
-			String[] protocols = annotation.protocols();
-
+		// 2. 关闭监听
+		Channel channel = this.serverChannel;
+		if (channel != null) {
 			try {
-
-				YkcCmdExecutor executor = (YkcCmdExecutor) SpringUtil.getBean(cmdClass);
-
-				for (String protocol : protocols) {
-					String key = protocol + "_" + frameType.getType();
-					YkcServerContext.EXECUTER_MAP.put(key, executor);
-				}
-
+				channel.close().sync();
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
 			} catch (Exception e) {
-				log.error("【云快充】 初始化cmd executor 异常: ", e);
-				throw new RuntimeException(e);
+				log.error("【Server】{} Close Failed : ", versionLabel, e);
 			}
-		});
+		}
+
+		// 3. 释放线程组
+		if (bossGroup != null) {
+			bossGroup.shutdownGracefully(0, 5, TimeUnit.SECONDS);
+		}
+		if (workerGroup != null) {
+			workerGroup.shutdownGracefully(0, 5, TimeUnit.SECONDS);
+		}
+		log.info("【云快充】 {}服务已停止", versionLabel);
 	}
 
 	protected abstract int getPort();
 
 	protected abstract String getVersionLabel();
 
-	// tcp server
-	private void startServer(int port) {
-		EventLoopGroup boss = new MultiThreadIoEventLoopGroup(1, NioIoHandler.newFactory());
-		EventLoopGroup worker = new MultiThreadIoEventLoopGroup(NioIoHandler.newFactory());
+	/**
+	 * TCP 服务启动
+	 */
+	private void startServer() {
+		int port = getPort();
+		String versionLabel = getVersionLabel();
+
+		bossGroup = new MultiThreadIoEventLoopGroup(1, NioIoHandler.newFactory());
+		workerGroup = new MultiThreadIoEventLoopGroup(NioIoHandler.newFactory());
 
 		ServerBootstrap bootstrap = new ServerBootstrap();
-
 		try {
-			bootstrap.group(boss, worker)
-				.channel(NioServerSocketChannel.class)
-				.childOption(ChannelOption.SO_KEEPALIVE, true)
-				.childOption(ChannelOption.SO_REUSEADDR, true)
-				.childOption(ChannelOption.SO_LINGER, 0)
-				.childHandler(new YkcChannelHandler(ykcUpDataRouter, getVersionLabel()))
-			;
+			bootstrap.group(bossGroup, workerGroup)
+					.channel(NioServerSocketChannel.class)
+					.option(ChannelOption.SO_BACKLOG, 10240)
+					.childOption(ChannelOption.SO_KEEPALIVE, true)
+					.childOption(ChannelOption.SO_REUSEADDR, true)
+					.childOption(ChannelOption.TCP_NODELAY, true)
+					.childOption(ChannelOption.SO_LINGER, 0)
+					.childHandler(new YkcChannelHandler(ykcUpDataRouter, versionLabel, readerIdleSeconds()));
 
 			ChannelFuture future = bootstrap.bind("0.0.0.0", port).sync();
-			channel = future.channel();
-
-			log.info("【云快充】 {}服务启动, 监听端口： {}", getVersionLabel(), port);
-			channel.closeFuture().sync();
+			serverChannel = future.channel();
+			log.info("【云快充】 {}服务启动, 监听端口: {}", versionLabel, port);
+			serverChannel.closeFuture().sync();
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+			log.warn("【云快充】 {}服务监听被中断, 端口: {}", versionLabel, port);
 		} catch (Exception e) {
-			log.error("【Server】 Start Failed : ", e);
-			throw new RuntimeException(e);
+			log.error("【Server】{} Start Failed, port: {} : ", versionLabel, port, e);
+			throw new IllegalStateException("云快充服务启动失败: " + versionLabel + ", port=" + port, e);
 		} finally {
-			boss.shutdownGracefully();
-			worker.shutdownGracefully();
+			if (bossGroup != null) {
+				bossGroup.shutdownGracefully(0, 5, TimeUnit.SECONDS);
+			}
+			if (workerGroup != null) {
+				workerGroup.shutdownGracefully(0, 5, TimeUnit.SECONDS);
+			}
 		}
+	}
+
+	/**
+	 * 读空闲判定为离线的秒数；桩心跳周期为 10s，留足余量
+	 */
+	protected int readerIdleSeconds() {
+		Integer seconds = appConfig.getYkcReaderIdleSeconds();
+		return seconds == null || seconds <= 0 ? 30 : seconds;
 	}
 }

@@ -17,7 +17,7 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.BILLING_MODEL_VERIFY, protocols = {V15, V16, V17})
+@ProtocolCmd(value = FrameType.BILLING_MODEL_VERIFY, protocols = {V15, V16, V17, V18, V21})
 public class YkcV15BillingModelVerifyUpCmd extends YkcCmdExecutor { // 计费模型验证请求
 
 	private final YkcV15BillingModelVerifyDownCmd ykcV15BillingVerifyModelDownCmd;

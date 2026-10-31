@@ -2,66 +2,98 @@
   "schema_version": 1,
   "diagram_type": "architecture",
   "meta": {
-    "title": "vcpp 充电桩边缘接入服务架构",
+    "title": "vcpp 云快充接入架构",
     "locale": "zh-CN",
     "quality_profile": "showcase",
-    "viewBox": [1000, 560],
     "repository": {
       "url": "https://github.com/vbeats/vcpp",
       "provider": "github",
-      "link_mode": "web",
-      "revision": "8ebf6936d14daf45521b715492f910bf5733139d"
+      "link_mode": "local-only",
+      "revision": "bb39bd88022d11402498d2a565ca68ae705f870f"
     },
     "views": [
       {
-        "id": "uplink",
-        "label": "设备上行链路",
-        "focus": ["pile", "tcp", "router", "executors", "ctx"],
-        "note": "桩侧报文经拆帧与 CRC 校验后，按帧类型路由到对应版本的指令执行器。"
+        "id": "upstream-path",
+        "label": "上行链路",
+        "focus": ["pile", "tcp", "pipeline", "router", "executors", "upstream", "platform"],
+        "note": "桩侧报文经拆帧、CRC 校验、版本路由后由执行器处理并上报。"
       },
       {
-        "id": "downlink",
-        "label": "平台下行链路",
-        "focus": ["platform", "mqtt", "executors", "tcp", "pile"],
-        "note": "运营平台经 MQTT 下发指令，按桩号取到 Channel 后组应答帧写回设备。"
+        "id": "boot-wiring",
+        "label": "启动期装配",
+        "focus": ["version", "registry", "schema", "executors"],
+        "note": "版本能力模型驱动执行器注册与声明式帧解析。"
       },
       {
-        "id": "state",
-        "label": "连接状态与边界",
-        "focus": ["executors", "ctx", "mqtt"],
-        "note": "桩号与 Channel 的映射全部驻留在进程内内存表中。"
+        "id": "downstream-path",
+        "label": "下行链路",
+        "focus": ["platform", "mqtt", "ctx", "executors", "pile"],
+        "note": "平台指令经 MQTT 下发，按桩号取连接后组帧回写。"
       }
     ]
   },
   "components": [
     {
+      "id": "version",
+      "type": "backend",
+      "label": "版本能力模型",
+      "sublabel": "YkcVersion",
+      "pos": [330, 140],
+      "size": [118, 56]
+    },
+    {
+      "id": "registry",
+      "type": "backend",
+      "label": "执行器注册表",
+      "sublabel": "覆盖校验",
+      "pos": [470, 140],
+      "size": [120, 56]
+    },
+    {
+      "id": "schema",
+      "type": "backend",
+      "label": "声明式帧解析",
+      "sublabel": "FrameSchema",
+      "pos": [640, 140],
+      "size": [118, 56]
+    },
+    {
       "id": "pile",
       "type": "external",
-      "label": "充电桩设备",
-      "sublabel": "云快充 1.5 ~ 2.1",
-      "pos": [25, 340],
-      "size": [120, 60]
+      "label": "充电桩 / 模拟器",
+      "sublabel": "V1.5 ~ V2.1",
+      "pos": [40, 290],
+      "size": [112, 56]
     },
     {
       "id": "tcp",
       "type": "backend",
-      "label": "Netty TCP 接入层",
-      "sublabel": "端口 9847-9851",
-      "tag": "ykc",
-      "pos": [175, 336],
-      "size": [130, 68],
+      "label": "版本 TCP 服务",
+      "sublabel": "9847~9851",
+      "pos": [215, 290],
+      "size": [116, 56],
       "sources": [
-        { "path": "src/main/java/com/csf/vcpp/ykc/cmd/AbstractYkcServerBootstrap.java", "label": "服务启动与端口绑定" },
+        { "path": "src/main/java/com/csf/vcpp/ykc/cmd/AbstractYkcServerBootstrap.java", "label": "服务启动与端口绑定" }
+      ]
+    },
+    {
+      "id": "pipeline",
+      "type": "backend",
+      "label": "Netty Pipeline",
+      "sublabel": "拆帧 · 空闲检测",
+      "pos": [395, 290],
+      "size": [118, 56],
+      "sources": [
         { "path": "src/main/java/com/csf/vcpp/ykc/YkcChannelHandler.java", "label": "pipeline 与拆帧" }
       ]
     },
     {
       "id": "router",
       "type": "backend",
-      "label": "YkcUpDataRouter",
-      "sublabel": "拆帧 + CRC16",
-      "pos": [335, 340],
-      "size": [120, 60],
+      "label": "上行路由",
+      "sublabel": "CRC 校验 · 帧分发",
+      "pos": [580, 290],
+      "size": [118, 56],
       "sources": [
         { "path": "src/main/java/com/csf/vcpp/ykc/router/YkcUpDataRouter.java", "label": "帧解析与路由" }
       ]
@@ -69,23 +101,29 @@
     {
       "id": "executors",
       "type": "backend",
-      "label": "指令执行器注册表",
-      "sublabel": "@ProtocolCmd 注册表",
-      "tag": "EXECUTER_MAP",
-      "pos": [485, 332],
-      "size": [150, 76],
+      "label": "帧执行器",
+      "sublabel": "51~77 帧类型",
+      "pos": [775, 290],
+      "size": [130, 58],
       "sources": [
-        { "path": "src/main/java/com/csf/vcpp/ykc/executor/YkcCmdExecutor.java", "label": "执行器基类" },
-        { "path": "src/main/java/com/csf/vcpp/annotation/ProtocolCmd.java", "label": "注册注解" }
+        { "path": "src/main/java/com/csf/vcpp/ykc/executor/YkcCmdExecutor.java", "label": "执行器基类" }
       ]
+    },
+    {
+      "id": "upstream",
+      "type": "cloud",
+      "label": "上行上报",
+      "sublabel": "UpstreamPublisher",
+      "pos": [990, 170],
+      "size": [120, 56]
     },
     {
       "id": "mqtt",
       "type": "messagebus",
-      "label": "MQTT 网关",
-      "sublabel": "Paho v5",
-      "pos": [665, 340],
-      "size": [120, 60],
+      "label": "平台 MQTT",
+      "sublabel": "vcpp/cmd",
+      "pos": [990, 410],
+      "size": [120, 56],
       "sources": [
         { "path": "src/main/java/com/csf/vcpp/mqtt/VcppMqttConfig.java", "label": "客户端与订阅" },
         { "path": "src/main/java/com/csf/vcpp/mqtt/MqttMsgService.java", "label": "下行指令分发" }
@@ -95,81 +133,72 @@
       "id": "platform",
       "type": "external",
       "label": "运营平台",
-      "sublabel": "MQTT 指令下发",
-      "pos": [850, 340],
-      "size": [130, 60]
+      "sublabel": "指令 · 数据",
+      "pos": [1180, 290],
+      "size": [110, 56]
     },
     {
       "id": "ctx",
-      "type": "database",
-      "label": "连接注册表",
-      "sublabel": "桩号 ↔ Channel",
-      "tag": "进程内存",
-      "pos": [485, 100],
-      "size": [150, 58],
+      "type": "backend",
+      "label": "连接上下文",
+      "sublabel": "桩号→Channel",
+      "pos": [800, 510],
+      "size": [124, 56],
       "sources": [
-        { "path": "src/main/java/com/csf/vcpp/ykc/context/YkcServerContext.java", "label": "桩号与 Channel 映射" }
+        { "path": "src/main/java/com/csf/vcpp/ykc/context/YkcServerContext.java", "label": "映射与 ChannelGroup" }
       ]
     }
   ],
   "boundaries": [
     {
       "kind": "region",
-      "label": "vcpp 边缘服务进程 · Spring Boot 4 / JDK 21",
-      "wraps": ["tcp", "router", "executors", "mqtt", "ctx"],
-      "pad": 24
-    },
-    {
-      "kind": "region",
-      "label": "运营平台侧",
-      "wraps": ["platform"],
-      "pad": 18
+      "label": "vcpp 进程",
+      "wraps": ["tcp", "pipeline", "router", "executors", "upstream", "mqtt", "version", "registry", "schema", "ctx"],
+      "pad": 20
     }
   ],
   "connections": [
-    { "from": "pile", "to": "tcp", "label": "云快充 TCP 长连接", "variant": "emphasis", "labelDy": -58 },
-    { "from": "tcp", "to": "router", "label": "上行报文 · 虚拟线程派发", "labelDy": -58 },
-    { "from": "router", "to": "executors", "label": "版本 + 帧类型路由", "labelDy": -58 },
-    { "from": "executors", "to": "ctx", "label": "登录成功登记桩号" },
-    {
-      "from": "executors",
-      "to": "tcp",
-      "label": "应答帧下发",
-      "fromSide": "bottom",
-      "toSide": "bottom",
-      "via": [[560, 490], [240, 490]],
-      "labelSegment": 1,
-      "labelDy": -14
-    },
-    { "from": "platform", "to": "mqtt", "label": "MQTT v5 发布指令", "labelDy": -58 },
-    { "from": "mqtt", "to": "executors", "label": "vcpp/cmd 下行指令", "variant": "emphasis", "labelDy": -58 }
+    { "from": "pile", "to": "tcp", "label": "TCP 长连接", "variant": "emphasis" },
+    { "from": "tcp", "to": "pipeline", "label": "连接接入" },
+    { "from": "pipeline", "to": "router", "label": "整帧 ByteBuf" },
+    { "from": "router", "to": "executors", "label": "版本_帧类型" },
+    { "from": "executors", "to": "pile", "label": "应答帧 / 下发帧", "variant": "dashed", "fromSide": "top", "toSide": "top", "via": [[840, 80], [96, 80]] },
+    { "from": "executors", "to": "upstream", "label": "业务数据上报" },
+    { "from": "upstream", "to": "platform", "label": "vcpp/data|ops|trade", "variant": "dashed" },
+    { "from": "platform", "to": "mqtt", "label": "指令 JSON", "variant": "dashed" },
+    { "from": "mqtt", "to": "executors", "label": "下行指令分发", "variant": "dashed" },
+    { "from": "mqtt", "to": "ctx", "label": "按桩号取 Channel", "variant": "dashed", "fromSide": "bottom", "toSide": "right" },
+    { "from": "executors", "to": "ctx", "label": "登录绑定 · 解绑", "fromSide": "bottom", "toSide": "top" },
+    { "from": "registry", "to": "executors", "label": "注册执行器表", "variant": "dashed", "fromSide": "bottom", "toSide": "top", "labelDx": -60 },
+    { "from": "version", "to": "tcp", "label": "帧结构参数", "variant": "dashed", "fromSide": "bottom", "toSide": "top" },
+    { "from": "schema", "to": "executors", "label": "解析型帧兜底", "variant": "dashed", "fromSide": "bottom", "toSide": "top" }
   ],
   "cards": [
     {
       "dot": "cyan",
-      "title": "协议接入",
+      "title": "启动期装配",
       "items": [
-        "每版本独占端口：1.5→9847 … 2.1→9851",
-        "帧结构 0x68 起始 + 长度 + 序列号 + 加密标志 + 帧类型 + CRC16",
-        "v2.1 起长度字段扩为 2 字节，新增 7 字节 CP56Time2a 时间"
+        "YkcCmdRegistry 是唯一注册入口，直接取 Spring 容器中的执行器 Bean，不再依赖包扫描",
+        "YkcVersion 集中定义帧结构参数与各版本帧类型集合，改版本能力只改一处",
+        "纯解析上报的帧用 FrameSchema 声明字段即可，无需写执行器类"
       ]
     },
     {
       "dot": "emerald",
-      "title": "指令注册机制",
+      "title": "连接与内存",
       "items": [
-        "各版本 Bootstrap 扫描自身包，注册 @ProtocolCmd 指令执行器",
-        "键为「版本 + _ + 帧类型」，存于 EXECUTER_MAP",
-        "厂商差异在对应版本包内新建同类指令，不改其他版本"
+        "桩号 → Channel 单索引 + ChannelGroup，会话元数据挂在 Channel attr 上",
+        "ByteBuf 在路由 finally 与应答组包处释放，泄漏检测默认 advanced",
+        "虚拟线程派发前信号量背压，映射初始容量由 ykc-expected-devices 决定"
       ]
     },
     {
-      "dot": "amber",
-      "title": "当前状态与边界",
+      "dot": "rose",
+      "title": "能力预留与占位",
       "items": [
-        "上行数据目前仅日志输出，MQTT 上报尚未接入",
-        "登录校验为硬编码占位，待接 Forest ApiClient",
-        "桩号 ↔ Channel 为进程内内存映射；OCPP 仍在规划"
+        "上行上报走 UpstreamPublisher，当前默认实现只打日志，接 MQTT 只需新增一个 Bean",
+        "平台下行 MQTT 仅保留订阅骨架，连接失败不再 System.exit，设备接入保持可用",
+        "登录校验与计费模型拉取仍为占位，待接 http/ApiClient"
       ]
     }
   ]

@@ -6,8 +6,10 @@ import com.csf.vcpp.ykc.router.YkcUpDataRouter;
 import org.springframework.stereotype.Service;
 
 import static com.csf.vcpp.ykc.consts.YkcProtocolConst.V16;
+import org.springframework.context.annotation.DependsOn;
 
 @Service
+@DependsOn({"ykcCmdRegistry", "ykcCodecConfig"})
 public class YkcV16ServerBootstrap extends AbstractYkcServerBootstrap {
 
 	public YkcV16ServerBootstrap(AppConfig appConfig, YkcUpDataRouter ykcUpDataRouter) {

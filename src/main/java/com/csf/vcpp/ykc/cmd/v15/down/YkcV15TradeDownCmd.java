@@ -14,13 +14,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import static com.csf.vcpp.ykc.consts.YkcProtocolConst.V15;
+import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 import static com.csf.vcpp.ykc.consts.YkcProtocolConst.V16;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.TRADE_ACK, protocols = {V15, V16})
+@ProtocolCmd(value = FrameType.TRADE_ACK, protocols = {V15, V16, V17, V18, V21})
 public class YkcV15TradeDownCmd extends YkcCmdExecutor { // 交易记录确认
 	@Override
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {

@@ -20,7 +20,7 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.CHARGE_FINISH, protocols = {V15, V16, V17})
+@ProtocolCmd(value = FrameType.CHARGE_FINISH, protocols = {V15, V16, V17, V18, V21})
 public class YkcV15ChargeFinishUpCmd extends YkcCmdExecutor { // 充电结束
 	@Override
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {

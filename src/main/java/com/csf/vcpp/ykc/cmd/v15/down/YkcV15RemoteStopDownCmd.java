@@ -19,7 +19,7 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.REMOTE_STOP, protocols = {V15, V16, V17})
+@ProtocolCmd(value = FrameType.REMOTE_STOP, protocols = {V15, V16, V17, V18, V21})
 public class YkcV15RemoteStopDownCmd extends YkcCmdExecutor { // 运营平台远程停机
 
 	@Override

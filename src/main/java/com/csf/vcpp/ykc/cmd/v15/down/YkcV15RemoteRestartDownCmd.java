@@ -20,7 +20,7 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.REMOTE_RESTART, protocols = {V15, V16, V17, V18})
+@ProtocolCmd(value = FrameType.REMOTE_RESTART, protocols = {V15, V16, V17, V18, V21})
 public class YkcV15RemoteRestartDownCmd extends YkcCmdExecutor { // 远程重启
 	@Override
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {

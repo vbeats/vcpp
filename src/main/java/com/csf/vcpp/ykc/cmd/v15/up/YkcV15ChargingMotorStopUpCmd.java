@@ -17,7 +17,7 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.CHARGING_MOTOR_STOP, protocols = {V15, V16, V17})
+@ProtocolCmd(value = FrameType.CHARGING_MOTOR_STOP, protocols = {V15, V16, V17, V18, V21})
 public class YkcV15ChargingMotorStopUpCmd extends YkcCmdExecutor { // 充电阶段充电机中止
 	@Override
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {

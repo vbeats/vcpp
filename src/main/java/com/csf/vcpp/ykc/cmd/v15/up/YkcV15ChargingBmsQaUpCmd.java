@@ -19,7 +19,7 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.CHARGING_BMS_QA, protocols = {V15, V16, V17})
+@ProtocolCmd(value = FrameType.CHARGING_BMS_QA, protocols = {V15, V16, V17, V18, V21})
 public class YkcV15ChargingBmsQaUpCmd extends YkcCmdExecutor { // 充电过程BMS需求&充电机输出
 	@Override
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {

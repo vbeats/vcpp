@@ -40,3 +40,10 @@ vcpp:
   ykc17-port: 9849
   ykc18-port: 9850
   ykc21-port: 9851
+  # 计费模型默认费率段数: 4=尖峰平谷 5=尖峰平谷深谷
+  ykc-billing-section-count: 4
+  # 读空闲判定离线秒数(桩心跳周期 10s)
+  ykc-reader-idle-seconds: 30
+  # 预期同时在线桩数，仅用于设置「桩号 -> Channel」映射初始容量(65536 -> 约 0.5MB 表)。
+  # 调大不会更快，只会常驻一张更大的空表(100万 -> 约 8MB)；调小也没问题，CHM 扩容是协作式的。
+  ykc-expected-devices: 65536

@@ -16,7 +16,7 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.REMOTE_CHARGE_ACK, protocols = {V15, V16, V17})
+@ProtocolCmd(value = FrameType.REMOTE_CHARGE_ACK, protocols = {V15, V16, V17, V18, V21})
 public class YkcV15RemoteChargetUpCmd extends YkcCmdExecutor { // 远程启机命令回复
 
 	@Override

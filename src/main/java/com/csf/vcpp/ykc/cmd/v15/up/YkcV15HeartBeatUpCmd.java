@@ -19,7 +19,7 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.HEARTBEAT, protocols = {V15, V16, V17, V18})
+@ProtocolCmd(value = FrameType.HEARTBEAT, protocols = {V15, V16, V17, V18, V21})
 public class YkcV15HeartBeatUpCmd extends YkcCmdExecutor { // 心跳 10s周期
 
 	private final YkcV15HeartBeatDownCmd ykcV15HeartBeatDownCmd;
@@ -38,8 +38,9 @@ public class YkcV15HeartBeatUpCmd extends YkcCmdExecutor { // 心跳 10s周期
 
 		log.info("【云快充】{} ⬆️ 心跳💓 - 桩号 : {} 枪号 : {} 枪状态: {}[{}]", versionLabel, deviceNo, gunNo, gunStatus, getGunStatusDesc(gunStatus));
 
-		Channel ch = YkcServerContext.DEVICE_CHANNEL_MAP.get(deviceNo);
-		if (ObjectUtils.isEmpty(ch)) {
+		// 未登录（或映射已失效）的连接直接断开，避免未认证连接长期占用
+		if (!deviceNo.equals(YkcServerContext.getDeviceNo(channel))) {
+			log.warn("【云快充】{} ⬆️ 心跳 - 桩号: {} 未完成登录, 断开连接", versionLabel, deviceNo);
 			channel.close();
 			return;
 		}

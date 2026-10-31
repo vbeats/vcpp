@@ -64,8 +64,9 @@ public class VcppMqttConfig implements DisposableBean {
 
 			return client;
 		} catch (Exception e) {
-			log.error("mqtt client connect error: ", e);
-			System.exit(-1);
+			// 与上层平台的 MQTT 通道暂不实现（能力预留）：连接失败不再终止进程，
+			// 设备侧 TCP 接入能力必须保持可用，避免 broker 不可用时整机退出。
+			log.error("mqtt client connect error, 平台 MQTT 通道不可用（能力预留中）: ", e);
 			return null;
 		}
 	}

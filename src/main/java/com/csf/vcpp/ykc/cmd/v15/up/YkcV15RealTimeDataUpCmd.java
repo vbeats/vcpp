@@ -21,7 +21,7 @@ import static com.csf.vcpp.ykc.consts.YkcProtocolConst.*;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@ProtocolCmd(value = FrameType.REAL_TIME_DATA_UP, protocols = {V15, V16, V17})
+@ProtocolCmd(value = FrameType.REAL_TIME_DATA_UP, protocols = {V15, V16, V17, V18})
 public class YkcV15RealTimeDataUpCmd extends YkcCmdExecutor { // 实时监测数据
 	@Override
 	public void execute(Channel channel, String versionLabel, YkcMsgData data) {

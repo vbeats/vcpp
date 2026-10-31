@@ -5,6 +5,7 @@ import com.csf.vcpp.utils.BcdUtil;
 import com.csf.vcpp.ykc.cmd.v15.down.YkcV15LoginDownCmd;
 import com.csf.vcpp.ykc.cmd.v15.down.YkcV15TimeSyncDownCmd;
 import com.csf.vcpp.ykc.context.YkcServerContext;
+import com.csf.vcpp.ykc.context.YkcSession;
 import com.csf.vcpp.ykc.enums.FrameType;
 import com.csf.vcpp.ykc.executor.YkcCmdExecutor;
 import com.csf.vcpp.ykc.model.YkcMsgData;
@@ -70,8 +71,8 @@ public class YkcV21LoginUpCmd extends YkcCmdExecutor {    // 充电桩登录上�
 		String token = BcdUtil.bcdBytesToHex(tokenBytes);// token
 
 		byte[] phoneBytes = new byte[11];
-		body.readBytes(tokenBytes);
-		String phone = new String(phoneBytes, StandardCharsets.US_ASCII);// 手机号码
+		body.readBytes(phoneBytes);
+		String phone = new String(phoneBytes, StandardCharsets.US_ASCII).replaceAll("\\u0000+$", "");// 手机号码
 
 		log.info("""
 				【云快充】{} ⬆️ 登录请求 - 桩号: {}
@@ -97,8 +98,12 @@ public class YkcV21LoginUpCmd extends YkcCmdExecutor {    // 充电桩登录上�
 		byte loginRes = 0x01; // 0x00：登陆成功 0x01:登陆失败
 
 		if (loginValid) {
-			YkcServerContext.DEVICE_CHANNEL_MAP.put(deviceNo, channel);
-			YkcServerContext.CHANNEL_DEVICE_MAP.put(channel.id().asLongText(), deviceNo);
+			YkcServerContext.bind(channel, deviceNo);
+			YkcSession session = YkcServerContext.getSession(channel);
+			if (session != null) {
+				session.setPileType(pileType);
+				session.setGunCount(gunCount);
+			}
 			loginRes = 0x00;
 			log.warn("【云快充】{} ⬆️ 登录请求 - 桩号: {} 登录成功", versionLabel, deviceNo);
 		} else {

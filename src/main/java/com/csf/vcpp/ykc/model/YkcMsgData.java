@@ -32,6 +32,8 @@ public class YkcMsgData implements Serializable {
 	// ---------ack 应答 额外参数
 	private byte gunNo; // 枪号
 
+	private String deviceNo; // 14位桩号（平台下发指令时使用）
+
 	private byte[] deviceNoBytes; // 7字节 桩号
 
 	private byte loginRes; // 登录结果 0x00 登录成功 0x01 登录失败

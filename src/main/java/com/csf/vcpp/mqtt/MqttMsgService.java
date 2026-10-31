@@ -31,8 +31,9 @@ public class MqttMsgService {
 	private void handleYkcCmd(CmdMsg cmdMsg) {
 
 		String deviceNo = cmdMsg.getDeviceNo();
-		Channel channel = YkcServerContext.DEVICE_CHANNEL_MAP.get(deviceNo);
+		Channel channel = YkcServerContext.getChannel(deviceNo);
 		if (ObjectUtils.isEmpty(channel)) {
+			log.warn("【云快充】⬇️ 桩号: {} 未在线, 指令丢弃: {}", deviceNo, cmdMsg.getCmdType());
 			return;
 		}
 

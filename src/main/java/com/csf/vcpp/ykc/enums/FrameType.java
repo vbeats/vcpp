@@ -141,6 +141,14 @@ public enum FrameType {
 	// --------------v.21+------------------
 	VIN_UPLOAD((short) 0xA9, "充电桩上报vin 码"), // ⬆️
 	VIN_UPLOAD_ACK((short) 0xAA, "充电桩上报vin 码回复确认"), // ⬇️
+
+	// -------------- 二维码(v1.5/v1.6补充协议) ------------------
+	QR_SEND_ACK((short) 0x9B, "充电桩应答平台下发二维码"), // ⬆️ v1.6补充
+	QR_SEND((short) 0x9C, "平台下发二维码"), // ⬇️ v1.6补充
+	QR_SEND2((short) 0x9E, "平台下发二维码(带桩编号)"), // ⬇️ v1.6补充
+
+	QR_PREFIX((short) 0xF0, "后台远程下发二维码前缀"), // ⬇️ v1.5补充
+	QR_PREFIX_ACK((short) 0xF1, "桩应答远程下发二维码前缀"), // ⬆️ v1.5补充
 	;
 
 	private static final Map<Short, FrameType> lookup = new HashMap<>(64);
